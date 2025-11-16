@@ -108,7 +108,7 @@ class Program
         var name = Helper.NameSurnameInput("ime");
         var surname = Helper.NameSurnameInput("prezime");
         var email = Passenger.EmailRegisterInput();
-        var password = Helper.PasswordInput();
+        var password = Passenger.PasswordRegisterInput();
         var birthDate = Helper.BirthDateInput();
         var gender = Helper.GenderInput();
         
@@ -126,9 +126,12 @@ class Program
             Console.WriteLine("Neuspješna prijava.Pokušaj ponovno kasnije.\n");
             return;
         }
-        var password = Helper.PasswordInput();
 
+        var password = Passenger.PasswordLoginInput(email);
+        if(password == "")
+            Console.WriteLine("Neuspješna prijava pokušaj ponovno kasnije.\n");
     }
+    
     
 }
     

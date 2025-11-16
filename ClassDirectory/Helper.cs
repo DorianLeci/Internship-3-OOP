@@ -95,29 +95,7 @@ public class Helper
         }
 
     }
-    public static string PasswordInput()
-    {
-        while(true)
-        {
-            Console.WriteLine("\nUnesi lozinku.Minimalno osam znakova.Mora sadržavati bar jedno veliki slovo i jedan specijalni znak");
-            var inputPassword = Console.ReadLine()!;
-            inputPassword=Helper.RemoveWhiteSpace(inputPassword);
-            if (PasswordCheck(inputPassword))
-                return inputPassword;
-            else Console.WriteLine("\nPogrešan unos lozinke.");
-        }           
-    }
-
-    private static bool PasswordCheck(string inputPassword)
-    {
-        if (string.IsNullOrEmpty(inputPassword))
-            return false;
-        
-        bool isSpecialChar = inputPassword.Any(ch => !char.IsLetterOrDigit(ch));
-        bool isUpperChar = inputPassword.Any(ch => char.IsUpper(ch));
-        
-        return  (isSpecialChar && isUpperChar && inputPassword.Length>=8);
-    }
+    
     public static bool ConfirmationMessage(string messageType)
     {
         Console.WriteLine("\nŽeliš li zaista {0} -- y/n. Ako je unos krajnjeg odabira neispravan ili je odabir 'n' operacija se obustavlja.\n", messageType);
