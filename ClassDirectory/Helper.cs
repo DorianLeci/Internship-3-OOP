@@ -8,6 +8,12 @@ public class Helper
         Male='M',
         Female='F'
     }
+
+    public static void WaitingUser()
+    {
+        Console.WriteLine("Čeka se any key korisnika....");
+        Console.ReadKey();
+    }
     public static string RemoveWhiteSpace(string inputString)
     {
         return new string(inputString.Where(ch => !char.IsWhiteSpace(ch)).ToArray());
@@ -45,55 +51,13 @@ public class Helper
 
         return inputArray;
     }
-    public static string EmailInput()
-    {
-        while(true)
-        {
-            Console.WriteLine("\nUnesi email.");
-            var inputEmail = Console.ReadLine()!;
-            inputEmail=Helper.RemoveWhiteSpace(inputEmail);
-            if (EmailCheck(inputEmail))
-                return inputEmail;
-            else
-                Console.WriteLine("\nPogrešan unos emaila .Mora sadržavati @ znak.");
-        }        
-    }
-
+    
     public static bool EmailCheck(string inputEmail)
     {
-        return (!string.IsNullOrEmpty(inputEmail) && Regex.IsMatch(inputEmail,@"^\p{L}+\@\p{L}+\.\p{L}+"));
+        return (!string.IsNullOrEmpty(inputEmail) && Regex.IsMatch(inputEmail,@"^\w+\@\p{L}+\.\p{L}+"));
     
     }
-
-    public static bool PhoneInput(string inputPhone )
-    {
-        return (!string.IsNullOrEmpty(inputPhone) && Regex.IsMatch(inputPhone,@"^\+\d{3}\s\d{3}-\d{3}-\d{4}$"));
-    }
-
-    public static string PasswordInput()
-    {
-        while(true)
-        {
-            Console.WriteLine("\nUnesi lozinku.Minimalno osam znakova.Mora sadržavati bar jedno veliki slovo i jedan specijalni znak");
-            var inputPassword = Console.ReadLine()!;
-            inputPassword=Helper.RemoveWhiteSpace(inputPassword);
-            if (PasswordCheck(inputPassword))
-                return inputPassword;
-            else
-                Console.WriteLine("\nPogrešan unos lozinke.");
-        }           
-    }
-
-    public static bool PasswordCheck(string inputPassword)
-    {
-        if (string.IsNullOrEmpty(inputPassword))
-            return false;
-        
-        bool isSpecialChar = inputPassword.Any(ch => !char.IsLetterOrDigit(ch));
-        bool isUpperChar = inputPassword.Any(ch => char.IsUpper(ch));
-        
-        return  (isSpecialChar && isUpperChar && inputPassword.Length>=8);
-    }
+    
 
     public static DateOnly BirthDateInput()
     {
@@ -112,7 +76,7 @@ public class Helper
         while(true)
         {
             Console.WriteLine("\nUnesi spol.(M,F) ili (m,f)");
-            if (char.TryParse(Console.ReadLine(),out var inputGender) && GenderCheck(inputGender))
+            if (char.TryParse(Console.ReadLine()?.ToUpper(),out var inputGender) && GenderCheck(inputGender))
                 return inputGender;
             else
                 Console.WriteLine("\nPogrešan unos spola.");
@@ -131,5 +95,44 @@ public class Helper
         }
 
     }
+    public static string PasswordInput()
+    {
+        while(true)
+        {
+            Console.WriteLine("\nUnesi lozinku.Minimalno osam znakova.Mora sadržavati bar jedno veliki slovo i jedan specijalni znak");
+            var inputPassword = Console.ReadLine()!;
+            inputPassword=Helper.RemoveWhiteSpace(inputPassword);
+            if (PasswordCheck(inputPassword))
+                return inputPassword;
+            else Console.WriteLine("\nPogrešan unos lozinke.");
+        }           
+    }
 
+    private static bool PasswordCheck(string inputPassword)
+    {
+        if (string.IsNullOrEmpty(inputPassword))
+            return false;
+        
+        bool isSpecialChar = inputPassword.Any(ch => !char.IsLetterOrDigit(ch));
+        bool isUpperChar = inputPassword.Any(ch => char.IsUpper(ch));
+        
+        return  (isSpecialChar && isUpperChar && inputPassword.Length>=8);
+    }
+    public static bool ConfirmationMessage(string messageType)
+    {
+        Console.WriteLine("\nŽeliš li zaista {0} -- y/n. Ako je unos krajnjeg odabira neispravan ili je odabir 'n' operacija se obustavlja.\n", messageType);
+        if (char.TryParse(Console.ReadLine()?.Trim().ToLower(), out var inputChar) && inputChar == 'y')
+            return true;
+        else if (inputChar == 'n')
+        {
+            Console.WriteLine(
+                "\nOperacija obustavljena.Povratak na prethodni izbornik nakon pritiska bilo koje tipke.\n");
+            return false;
+        }
+        else
+        {
+            Console.WriteLine("\nUnos neispravan.Operacija se obustavljena.Povratak na prethodni izbornik nakon pritiska bilo koje tipke.\n");
+            return false;
+        }
+    }
 }
