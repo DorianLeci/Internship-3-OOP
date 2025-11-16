@@ -8,8 +8,10 @@ public class Passenger
     public string Email { get; }
     private string _password;
     public DateOnly BirthDate { get; }
-    
     public char Gender { get; }
+
+    public DateTime creationTime { get; }
+    public DateTime updateTime { get; }
 
     private static List<Passenger> _passengerList = new List<Passenger>();
     public Passenger(Guid id, string name, string surname, string email,string password,DateOnly birthDate,char gender)
@@ -21,6 +23,8 @@ public class Passenger
         this._password = password;
         this.BirthDate = birthDate;
         this.Gender = gender;
+        this.creationTime = DateTime.Now;
+        this.updateTime = DateTime.Now;
         _passengerList.Add(this);
     }
     public static string EmailRegisterInput()

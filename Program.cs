@@ -24,7 +24,7 @@ class Program
     {
         while (true)
         {
-            Console.WriteLine("----------------------");
+            Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Putnici\n");
             Console.WriteLine("2 - Letovi\n");
             Console.WriteLine("3 - Avioni\n");
@@ -59,7 +59,7 @@ class Program
     {
         while (true)
         {
-            Console.WriteLine("----------------------");
+            Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Registracija\n");
             Console.WriteLine("2 - Prijava\n");
             Console.WriteLine("0 - Izlaz iz programa");
