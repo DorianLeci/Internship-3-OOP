@@ -3,6 +3,11 @@ using System;
 using System.Text.RegularExpressions;
 public class Helper
 {
+    private enum GenderEnum
+    {
+        Male='M',
+        Female='F'
+    }
     public static string RemoveWhiteSpace(string inputString)
     {
         return new string(inputString.Where(ch => !char.IsWhiteSpace(ch)).ToArray());
@@ -100,6 +105,31 @@ public class Helper
             else
                 Console.WriteLine("\nPogrešan unos datuma.");
         }               
+    }
+
+    public static char GenderInput()
+    {
+        while(true)
+        {
+            Console.WriteLine("\nUnesi spol.(M,F) ili (m,f)");
+            if (char.TryParse(Console.ReadLine(),out var inputGender) && GenderCheck(inputGender))
+                return inputGender;
+            else
+                Console.WriteLine("\nPogrešan unos spola.");
+        }               
+    }
+
+    public static bool GenderCheck(char inputGender)
+    {
+        try
+        {
+            return Enum.IsDefined(typeof(GenderEnum), (int)inputGender);
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+
     }
 
 }

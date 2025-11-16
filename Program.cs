@@ -82,9 +82,10 @@ class Program
         var email = Helper.EmailInput();
         var password = Helper.PasswordInput();
         var birthDate = Helper.BirthDateInput();
+        var gender = Helper.GenderInput();
 
         // if (isNewPassenger)
-        //     var newPassenger = new Passenger(Rnd.Next(1, int.MaxValue), name, surname, email, phone);
+        //     var newPassenger = new Passenger(_rnd.Next(1, int.MaxValue), name, surname, email,birthDate,gender);
         // else if (!isNewPassenger)
         //     Passenger.CheckPassenger();
 

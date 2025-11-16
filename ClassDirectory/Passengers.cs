@@ -12,7 +12,7 @@ public class Passenger
     public string Gender { get; }
 
     private static List<Passenger> _passengerList = new List<Passenger>();
-    public Passenger(int id, string name, string surname, string email, string phone, string password,DateOnly birthDate)
+    public Passenger(int id, string name, string surname, string email,string password,DateOnly birthDate,string gender)
     {
         this.Id = id;
         this.Name = name;
@@ -20,6 +20,7 @@ public class Passenger
         this.Email = email;
         this.Password = password;
         this.BirthDate = birthDate;
+        this.Gender = gender;
         _passengerList.Add(this);
     }
     
