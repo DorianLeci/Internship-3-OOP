@@ -31,7 +31,19 @@ public class Airplane
         _airplaneList.Add(this);
     }
     
+    public static Airplane AddAirplane()
+    {
+        var name = Helper.NameSurnameInput("ime aviona", true);
+        var manufactureYear = Helper.YearInput("izrade aviona");
+        var categoriesDict=new Dictionary<Categories, int>();
 
+        do
+        {
+            Airplane.CategoriesInputNew(categoriesDict);
+        } while (categoriesDict.Count!=((int)Categories.Vip) && Helper.ConfirmationMessage("unijeti novu kategoriju"));
+        return new Airplane(name,manufactureYear, categoriesDict);
+        
+    }
     public static void CategoriesInputNew(Dictionary<Categories, int> categoriesDict)
     {
         while (true)
@@ -77,9 +89,17 @@ public class Airplane
             else Console.WriteLine("Pogrešan format unosa.");           
         }
     }
+    public static void AirplaneOutput()
+    {
 
+        foreach (var airplane in _airplaneList)
+        {
+            airplane.FormattedAirplaneOutput();
+        }
+    }
     public void FormattedAirplaneOutput()
     {
+        Console.WriteLine("\n-----------");
         Console.WriteLine("{0} - {1} - {2} - {3}",this.Id,this.Name,this.ManufactureYear,this.FlightCount);
         Console.Write("Kategorije: [");
         foreach (var category in this._categoriesDict.Keys)
@@ -87,5 +107,8 @@ public class Airplane
             Console.Write("{0} ",category);
         }
         Console.Write("]\n");
+        Console.WriteLine("-----------\n");
     }
+    
+
 }

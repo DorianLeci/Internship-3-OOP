@@ -156,12 +156,13 @@ class Program
                         MainMenu();
                         break;
                     case 1:
-                        Console.WriteLine("Uspješan odabir.Prikaz svih aviona.\n");
+                        Console.WriteLine("Uspješan odabir.Prikaz svih aviona.");
+                        Airplane.AirplaneOutput();
                         Helper.WaitingUser();
                         break;
                     case 2:
                         Console.WriteLine("Uspješan odabir.Dodavanje aviona.\n");
-                        var newAirplane = AddAirplane();
+                        var newAirplane = Airplane.AddAirplane();
                         Helper.WaitingUser();
                         Console.WriteLine("\nUspješno dodan novi avion.");
                         newAirplane.FormattedAirplaneOutput();
@@ -179,19 +180,7 @@ class Program
         }        
     }
 
-    static Airplane AddAirplane()
-    {
-        var name = Helper.NameSurnameInput("ime aviona", true);
-        var manufactureYear = Helper.YearInput("izrade aviona");
-        var categoriesDict=new Dictionary<Categories, int>();
 
-        do
-        {
-            Airplane.CategoriesInputNew(categoriesDict);
-        } while (categoriesDict.Count!=((int)Categories.Vip) && Helper.ConfirmationMessage("unijeti novu kategoriju"));
-        return new Airplane(name,manufactureYear, categoriesDict);
-        
-    }
 }
     
 
