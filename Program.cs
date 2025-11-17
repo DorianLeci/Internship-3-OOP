@@ -109,8 +109,8 @@ class Program
     static void PassengerRegistration(bool isPassengerNew)
     {
 
-        var name = Helper.NameSurnameInput("ime",false);
-        var surname = Helper.NameSurnameInput("prezime",false);
+        var name = Passenger.PassengerNameInput("ime");
+        var surname = Passenger.PassengerNameInput("prezime");
         var email = Passenger.EmailRegisterInput();
         var password = Passenger.PasswordRegisterInput();
         var birthDate = Helper.YearInput("rođenja");
@@ -136,7 +136,7 @@ class Program
             Console.WriteLine("Neuspješna prijava pokušaj ponovno kasnije.\n");
     }
 
-    static void AirplaneMenu()
+    public static void AirplaneMenu()
     {
         while (true)
         {
@@ -166,6 +166,11 @@ class Program
                         Helper.WaitingUser();
                         Console.WriteLine("\nUspješno dodan novi avion.");
                         newAirplane.FormattedAirplaneOutput();
+                        Helper.WaitingUser();
+                        break;
+                    case 3:
+                        Console.WriteLine("Uspješan odabir.Pretraživanje aviona.");
+                        Airplane.AirplaneSearch();
                         Helper.WaitingUser();
                         break;
                     default:

@@ -19,34 +19,6 @@ public class Helper
     {
         return new string(inputString.Where(ch => !char.IsWhiteSpace(ch)).ToArray());
     }
-    public static string NameSurnameInput(string inputVar,bool isAirplane)
-    {
-        while (true)
-        {
-            Console.Write("\nUnesi {0}: ", inputVar);
-            var inputString = Console.ReadLine()!.ToLower();
-            var removed = RemoveWhiteSpace(inputString);
-            if (NameSurnameCheck(removed,isAirplane))
-            {
-                var inputArray = FormatNameSurname(inputString.Split(" ",StringSplitOptions.RemoveEmptyEntries));
-                return string.Concat(inputArray);
-            }
-            else 
-                if(isAirplane)
-                    Console.WriteLine("\nPogrešan unos {0}na .Ne smije biti prazno ili sadržavati specijalne znakove.", inputVar);
-                else if(!isAirplane)
-                    Console.WriteLine("\nPogrešan unos {0}na .Ne smije biti prazno ili sadržavati brojeve/specijalne znakove.", inputVar);                    
-        }
-    }
-
-    public static bool NameSurnameCheck(string inputString,bool isAirplane)
-    {
-        if(isAirplane)
-            return (!string.IsNullOrEmpty(inputString) && inputString.All(ch => char.IsLetter(ch) || char.IsDigit(ch)));
-        else
-            return (!string.IsNullOrEmpty(inputString) && inputString.All(ch => char.IsLetter(ch)));
-
-    }
     public static string[] FormatNameSurname(string[] inputArray)
     {
         int i = 0;
@@ -60,7 +32,12 @@ public class Helper
 
         return inputArray;
     }
-    
+    public static string ReturnFormattedInput(string inputPlane)
+    {
+        var inputArray = Helper.FormatNameSurname(inputPlane.Split(" ",StringSplitOptions.RemoveEmptyEntries));
+        var formattedInput = string.Concat(inputArray);
+        return formattedInput;
+    }   
     public static bool EmailCheck(string inputEmail)
     {
         return (!string.IsNullOrEmpty(inputEmail) && Regex.IsMatch(inputEmail,@"^\w+\@\p{L}+\.\p{L}+"));
