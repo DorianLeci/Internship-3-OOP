@@ -1,4 +1,5 @@
-﻿using Internship_3_OOP.ClassDirectory;
+﻿using System.Linq.Expressions;
+using Internship_3_OOP.ClassDirectory;
 namespace Internship_3_OOP;
 
 class Program
@@ -113,8 +114,8 @@ class Program
     static void PassengerRegistration(bool isPassengerNew)
     {
 
-        var name = Helper.NameSurnameInput("ime",false);
-        var surname = Helper.NameSurnameInput("prezime",false);
+        var name = Passenger.PassengerNameInput("ime");
+        var surname = Passenger.PassengerNameInput("prezime");
         var email = Passenger.EmailRegisterInput();
         var password = Passenger.PasswordRegisterInput();
         var birthDate = Helper.YearInput("rođenja");
@@ -140,10 +141,11 @@ class Program
             Console.WriteLine("Neuspješna prijava pokušaj ponovno kasnije.\n");
     }
 
-    static void AirplaneMenu()
+    public static void AirplaneMenu()
     {
         while (true)
         {
+            Console.Clear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Prikaz svih aviona\n");
             Console.WriteLine("2 - Dodavanje aviona\n");
@@ -160,16 +162,48 @@ class Program
                         MainMenu();
                         break;
                     case 1:
-                        Console.WriteLine("Uspješan odabir.Prikaz svih aviona.");
-                        Airplane.AirplaneOutput();
+                        if(Airplane.IsAirplaneListEmpty())
+                            Console.WriteLine("Lista aviona je prazna.Ne možeš ih prikazati.\n");
+                        else
+                        {
+                            Console.WriteLine("Uspješan odabir.Prikaz svih aviona.");
+                            Airplane.AirplaneOutput();                            
+                        }
+
                         Helper.WaitingUser();
                         break;
                     case 2:
+                        
                         Console.WriteLine("Uspješan odabir.Dodavanje aviona.\n");
-                        var newAirplane = Airplane.AddAirplane();
+                        var isNewAirplaneCreated = Airplane.AddAirplane();
+
+                        if (isNewAirplaneCreated)
+                        {
+                            Console.WriteLine("\nUspješno dodan novi avion.");
+                            Console.WriteLine("Vrijeme stvaranja: {0}",Airplane.GetLastElement().creationTime);
+                            Airplane.GetLastElement().FormattedAirplaneOutput();                           
+                        }
+                        else Console.WriteLine("Nije dodan novi avion.");
+                        
                         Helper.WaitingUser();
-                        Console.WriteLine("\nUspješno dodan novi avion.");
-                        newAirplane.FormattedAirplaneOutput();
+                        break;
+                    case 3:
+                        if(Airplane.IsAirplaneListEmpty())
+                            Console.WriteLine("Lista aviona je prazna.Ne možeš ih pretraživati.\n");
+                        else
+                        {
+                            Console.WriteLine("Uspješan odabir.Pretraživanje aviona.");
+                            Airplane.AirplaneSearch();                            
+                        }
+                        Helper.WaitingUser();
+                        break;
+                    case 4:
+                        if(Airplane.IsAirplaneListEmpty())
+                            Console.WriteLine("Lista aviona je prazna.Ne možeš ih brisati.\n");
+                        else
+                        {
+                            Airplane.DeleteAirplane();
+                        }
                         Helper.WaitingUser();
                         break;
                     default:

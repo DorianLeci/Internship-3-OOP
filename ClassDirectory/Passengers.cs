@@ -27,6 +27,26 @@ public class Passenger
         this.updateTime = DateTime.Now;
         _passengerList.Add(this);
     }
+    public static string PassengerNameInput(string message)
+    {
+        while (true)
+        {
+            Console.Write("\nUnesi {0}: ",message);
+            var inputPassenger = Console.ReadLine()!.ToLower();
+            var removed=Helper.RemoveWhiteSpace(inputPassenger);
+            if (ValidatePassengerName(removed))
+            {
+                var formattedInput = Helper.ReturnFormattedInput(inputPassenger);
+                return formattedInput;
+            }
+            else Console.WriteLine("Pogrešan unos.");
+        }
+
+    }
+    public static bool ValidatePassengerName(string inputPassenger)
+    {
+        return (!string.IsNullOrEmpty(inputPassenger) && inputPassenger.All(ch => char.IsLetter(ch)));
+    }
     public static string EmailRegisterInput()
     {
         while(true)
@@ -39,7 +59,7 @@ public class Passenger
                 return inputEmail;
             
             else if(!IsEmailUnique(inputEmail))
-                Console.WriteLine("Osoba s ovim emailom već postoji.Unesi drugi email.\n");
+                Console.WriteLine("Osoba s ovim emailom već postoji.Unesi drugi email.");
             
             else Console.WriteLine("\nPogrešan unos emaila.Unesi ponovno.");
         }        
