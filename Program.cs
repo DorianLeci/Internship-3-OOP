@@ -43,6 +43,10 @@ class Program
                         Console.WriteLine("Uspješan odabir izbornika za putnike.\n");
                         PassengerMenu();
                         break;
+                    case 2:
+                        Console.WriteLine("Uspješan odabir izbornika za putnike.\n");
+                        FlightMenu();
+                        break;
                     case 3:
                         Console.WriteLine("Uspješan odabir izbornika za avione.\n");
                         AirplaneMenu();
@@ -180,7 +184,52 @@ class Program
         }        
     }
 
+    static void FlightMenu()
+    {
+        while (true)
+        {
+            Console.WriteLine("\n----------------------");
+            Console.WriteLine("1 - Prikaz svih letova\n");
+            Console.WriteLine("2 - Dodavanje leta\n");
+            Console.WriteLine("0 - Povratak na glavni izbornik.");
+            Console.WriteLine("----------------------\n");
+            if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
+            {
+                switch (inputMainMenu)
+                {
+                    case 0:
+                        Console.WriteLine("Uspješan odabir.Povratak na glavni izbornik.\n");
+                        MainMenu();
+                        break;
+                    case 1:
+                        Console.WriteLine("Uspješan odabir.Registracija putnika.\n");
+                        Flight.AddFlight();
+                        Helper.WaitingUser();
+                        break;
+                    case 2:
+                        if (Passenger.IsPassengerListEmpty())
+                        {
+                            Console.WriteLine("Moraš prvo registrirati nekog korisnika prije nego što možeš pristupiti prijavi.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Uspješan odabir.Prijava putnika\n");
+                            PassengerLogin(false);                           
+                        }
 
+                        Helper.WaitingUser();
+                        break;
+                    default:
+                        Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nPogrešan tip podatka->unesi cijeli broj.");
+            }
+        }        
+    }
 }
     
 
