@@ -14,11 +14,11 @@ class Program
     static void DataSeed()
     {
         var pass1 = new Passenger(Guid.NewGuid(), "Dorian", "Leci", "zandzartz@gmail.com", "FujF48Ym#",
-            new DateOnly(2004, 3, 28), 'M');
+            2004, 'M');
         var pass2 = new Passenger(Guid.NewGuid(), "Nikola", "Filipović", "nfilip5@net.hr", "1234567#A",
-            new DateOnly(2004, 4, 27), 'M');
+            2004, 'M');
         var pass3 = new Passenger(Guid.NewGuid(), "Marija", "Hanić", "marijah@gmail.com", "123AbcdE#",
-            new DateOnly(2005, 6, 10), 'F');
+            2005, 'F');
     }
     static void MainMenu()
     {
@@ -66,15 +66,15 @@ class Program
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Registracija\n");
             Console.WriteLine("2 - Prijava\n");
-            Console.WriteLine("0 - Izlaz iz programa");
+            Console.WriteLine("0 - Povratak na glavni izbornik.");
             Console.WriteLine("----------------------\n");
             if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
             {
                 switch (inputMainMenu)
                 {
                     case 0:
-                        Console.WriteLine("Uspješan odabir.Izlaz iz aplikacije\n");
-                        Environment.Exit(0);
+                        Console.WriteLine("Uspješan odabir.Povratak na glavni izbornik.\n");
+                        MainMenu();
                         break;
                     case 1:
                         Console.WriteLine("Uspješan odabir.Registracija putnika.\n");
@@ -109,11 +109,11 @@ class Program
     static void PassengerRegistration(bool isPassengerNew)
     {
 
-        var name = Helper.NameSurnameInput("ime");
-        var surname = Helper.NameSurnameInput("prezime");
+        var name = Helper.NameSurnameInput("ime",false);
+        var surname = Helper.NameSurnameInput("prezime",false);
         var email = Passenger.EmailRegisterInput();
         var password = Passenger.PasswordRegisterInput();
-        var birthDate = Helper.BirthDateInput();
+        var birthDate = Helper.YearInput("rođenja");
         var gender = Helper.GenderInput();
         
         if (Helper.ConfirmationMessage("dodati putnika(izvršiti registraciju"))
@@ -160,6 +160,11 @@ class Program
                         Helper.WaitingUser();
                         break;
                     case 2:
+                        Console.WriteLine("Uspješan odabir.Dodavanje aviona.\n");
+                        var newAirplane = AddAirplane();
+                        Helper.WaitingUser();
+                        Console.WriteLine("\nUspješno dodan novi avion.");
+                        newAirplane.FormattedAirplaneOutput();
                         Helper.WaitingUser();
                         break;
                     default:
@@ -173,7 +178,20 @@ class Program
             }
         }        
     }
-    
+
+    static Airplane AddAirplane()
+    {
+        var name = Helper.NameSurnameInput("ime aviona", true);
+        var manufactureYear = Helper.YearInput("izrade aviona");
+        var categoriesDict=new Dictionary<Categories, int>();
+
+        do
+        {
+            Airplane.CategoriesInputNew(categoriesDict);
+        } while (categoriesDict.Count!=((int)Categories.Vip) && Helper.ConfirmationMessage("unijeti novu kategoriju"));
+        return new Airplane(name,manufactureYear, categoriesDict);
+        
+    }
 }
     
 

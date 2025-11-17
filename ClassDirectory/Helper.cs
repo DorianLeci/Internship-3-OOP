@@ -19,25 +19,33 @@ public class Helper
     {
         return new string(inputString.Where(ch => !char.IsWhiteSpace(ch)).ToArray());
     }
-    public static string NameSurnameInput(string inputVar)
+    public static string NameSurnameInput(string inputVar,bool isAirplane)
     {
         while (true)
         {
-            Console.WriteLine("Unesi {0}", inputVar);
+            Console.Write("\nUnesi {0}: ", inputVar);
             var inputString = Console.ReadLine()!.ToLower();
-            inputString = RemoveWhiteSpace(inputString);
-            if (NameSurnameCheck(inputString))
+            var removed = RemoveWhiteSpace(inputString);
+            if (NameSurnameCheck(removed,isAirplane))
             {
                 var inputArray = FormatNameSurname(inputString.Split(" ",StringSplitOptions.RemoveEmptyEntries));
                 return string.Concat(inputArray);
             }
-            else Console.WriteLine("\nPogrešan unos {0}na .Ne smije biti prazno ili sadržavati brojeve/specijalne znakove.", inputVar);
+            else 
+                if(isAirplane)
+                    Console.WriteLine("\nPogrešan unos {0}na .Ne smije biti prazno ili sadržavati specijalne znakove.", inputVar);
+                else if(!isAirplane)
+                    Console.WriteLine("\nPogrešan unos {0}na .Ne smije biti prazno ili sadržavati brojeve/specijalne znakove.", inputVar);                    
         }
     }
 
-    public static bool NameSurnameCheck(string inputString)
+    public static bool NameSurnameCheck(string inputString,bool isAirplane)
     {
-        return (!string.IsNullOrEmpty(inputString) && inputString.All(ch => char.IsLetter(ch) || ch == '-'));
+        if(isAirplane)
+            return (!string.IsNullOrEmpty(inputString) && inputString.All(ch => char.IsLetter(ch) || char.IsDigit(ch)));
+        else
+            return (!string.IsNullOrEmpty(inputString) && inputString.All(ch => char.IsLetter(ch)));
+
     }
     public static string[] FormatNameSurname(string[] inputArray)
     {
@@ -60,15 +68,15 @@ public class Helper
     }
     
 
-    public static DateOnly BirthDateInput()
+    public static int YearInput(string message)
     {
         while(true)
         {
-            Console.WriteLine("\nUnesi datum rođenja.Ne smije biti noviji od današnjeg datuma.");
-            if (DateOnly.TryParse(Console.ReadLine()?.Trim(), out var date) && date.ToDateTime(new TimeOnly())<=DateTime.Now.Date)
+            Console.Write("\nUnesi godinu {0}.Ne smije biti novija od trenutačne niti starija od prve godine: ",message);
+            if (int.TryParse(Console.ReadLine()?.Trim(), out var date) && date<=DateTime.Today.Year && date>=DateTime.MinValue.Year)
                 return date;
             else
-                Console.WriteLine("\nPogrešan unos datuma.");
+                Console.WriteLine("\nPogrešan unos godine.");
         }               
     }
 
@@ -76,7 +84,7 @@ public class Helper
     {
         while(true)
         {
-            Console.WriteLine("\nUnesi spol.(M,F) ili (m,f)");
+            Console.Write("\nUnesi spol.(M,F) ili (m,f): ");
             if (char.TryParse(Console.ReadLine()?.ToUpper(),out var inputGender) && GenderCheck(inputGender))
                 return inputGender;
             else
@@ -99,7 +107,7 @@ public class Helper
     
     public static bool ConfirmationMessage(string messageType)
     {
-        Console.WriteLine("\nŽeliš li zaista {0} -- y/n. Ako je unos krajnjeg odabira neispravan ili je odabir 'n' operacija se obustavlja.\n", messageType);
+        Console.WriteLine("\nŽeliš li {0} -- y/n. Ako je unos krajnjeg odabira neispravan ili je odabir 'n' operacija se obustavlja.\n", messageType);
         if (char.TryParse(Console.ReadLine()?.Trim().ToLower(), out var inputChar) && inputChar == 'y')
             return true;
         else if (inputChar == 'n')

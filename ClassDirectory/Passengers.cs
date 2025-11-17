@@ -7,21 +7,21 @@ public class Passenger
     public string Surname { get; }
     public string Email { get; }
     private string _password;
-    public DateOnly BirthDate { get; }
+    public int BirthYear { get; }
     public char Gender { get; }
 
     public DateTime creationTime { get; }
     public DateTime updateTime { get; }
 
     private static List<Passenger> _passengerList = new List<Passenger>();
-    public Passenger(Guid id, string name, string surname, string email,string password,DateOnly birthDate,char gender)
+    public Passenger(Guid id, string name, string surname, string email,string password,int birthYear,char gender)
     {
         this.Id = id;
         this.Name = name;
         this.Surname = surname;
         this.Email = email;
         this._password = password;
-        this.BirthDate = birthDate;
+        this.BirthYear = birthYear;
         this.Gender = gender;
         this.creationTime = DateTime.Now;
         this.updateTime = DateTime.Now;
