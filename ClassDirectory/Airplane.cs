@@ -28,10 +28,9 @@ public class Airplane
         this.FlightCount = 0;
         this.creationTime = DateTime.Now;
         this.updateTime = DateTime.Now;
-        _airplaneList.Add(this);
     }
     
-    public static Airplane? AddAirplane()
+    public static bool AddAirplane()
     {
         var name = AirplaneNameInput();
         var manufactureYear = Helper.YearInput("izrade aviona");
@@ -44,14 +43,19 @@ public class Airplane
 
         if (Helper.ConfirmationMessage("dodati novi avion"))
         {
-            return new Airplane(name,manufactureYear, categoriesDict);            
+            _airplaneList.Add(new Airplane(name,manufactureYear, categoriesDict));
+            return true;
         }
 
-        return null;
+        return false;
 
 
     }
 
+    public static Airplane GetLastElement()
+    {
+        return _airplaneList.Last();
+    }
     public static string AirplaneNameInput()
     {
         while (true)
@@ -204,11 +208,10 @@ public class Airplane
 
     private static Airplane? SearchById()
     {
-        int inputId;
         do
         {
             Console.Write("Unesi id: ");
-                if(!int.TryParse(Console.ReadLine()?.Trim(), out inputId))
+                if(!int.TryParse(Console.ReadLine()?.Trim(), out var inputId))
                     Console.WriteLine("Pogrešan format unosa.");
                 else
                 {
@@ -247,5 +250,77 @@ public class Airplane
     public static bool IsAirplaneListEmpty()
     {
         return _airplaneList.Count == 0;
+    }
+
+    public static void DeleteAirplane()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("\n----------------------");
+            Console.WriteLine("1 - Brisanje aviona po id-u\n");
+            Console.WriteLine("2 - Brisanje aviona po nazivu\n");
+            Console.WriteLine("0 - Povratak na izbornik za avione");
+            Console.WriteLine("----------------------\n");
+            if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
+            {
+                switch (inputMainMenu)
+                {
+                    case 0:
+                        Console.WriteLine("Uspješan odabir.Povratak na izbornik za avione.\n");
+                        Program.AirplaneMenu();
+                        break;
+                    case 1:
+                        Console.WriteLine("Uspješan odabir.Brisanje po id-u.");
+                        DeleteById();
+                        Helper.WaitingUser();
+                        break;
+                    case 2:
+                        Console.WriteLine("Uspješan odabir.Brisanje po nazivu.\n");
+                        DeleteByName();                      
+                        Helper.WaitingUser();
+                        break;
+                    default:
+                        Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nPogrešan tip podatka->unesi cijeli broj.");
+            }
+        }             
+    }
+
+    private static void DeleteById()
+    {
+        var planeForDeletion = SearchById();
+        if (planeForDeletion == null)
+        {
+            Console.WriteLine("Ne postoji avion s unesenim id-om.");
+            return;
+        }
+
+        if (Helper.ConfirmationMessage("obrisati avion"))
+        {
+            _airplaneList.RemoveAll(plane=>plane.Id == planeForDeletion.Id);
+            Console.WriteLine("Uspješno brisanje aviona u trenutku: {0}",DateTime.Now);
+        }
+    }
+
+    private static void DeleteByName()
+    {
+        var planeForDeletion = SearchByName();
+        if (planeForDeletion == null)
+        {
+            Console.WriteLine("Ne postoji avion s unesenim imenom.");
+            return;
+        }
+
+        if (Helper.ConfirmationMessage("obrisati avion"))
+        {
+            _airplaneList.RemoveAll(plane=>plane.Id == planeForDeletion.Id);
+            Console.WriteLine("Uspješno brisanje aviona: {0} u trenutku: {1}",planeForDeletion.Name,DateTime.Now);
+        }        
     }
 }

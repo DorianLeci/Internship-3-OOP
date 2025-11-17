@@ -171,15 +171,16 @@ class Program
                     case 2:
                         
                         Console.WriteLine("Uspješan odabir.Dodavanje aviona.\n");
-                        var newAirplane = Airplane.AddAirplane();
+                        var isNewAirplaneCreated = Airplane.AddAirplane();
 
-                        if (newAirplane != null)
+                        if (!isNewAirplaneCreated)
                         {
                             Console.WriteLine("\nUspješno dodan novi avion.");
-                            Console.WriteLine("Vrijeme stvaranja: {0}",newAirplane.creationTime);
-                            newAirplane.FormattedAirplaneOutput();                           
+                            Console.WriteLine("Vrijeme stvaranja: {0}",Airplane.GetLastElement().creationTime);
+                            Airplane.GetLastElement().FormattedAirplaneOutput();                           
                         }
                         else Console.WriteLine("Nije dodan novi avion.");
+                        
                         Helper.WaitingUser();
                         break;
                     case 3:
@@ -189,6 +190,15 @@ class Program
                         {
                             Console.WriteLine("Uspješan odabir.Pretraživanje aviona.");
                             Airplane.AirplaneSearch();                            
+                        }
+                        Helper.WaitingUser();
+                        break;
+                    case 4:
+                        if(Airplane.IsAirplaneListEmpty())
+                            Console.WriteLine("Lista aviona je prazna.Ne možeš ih brisati.\n");
+                        else
+                        {
+                            Airplane.DeleteAirplane();
                         }
                         Helper.WaitingUser();
                         break;
