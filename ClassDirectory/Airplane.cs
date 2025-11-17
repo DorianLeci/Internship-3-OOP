@@ -12,7 +12,7 @@ public class Airplane
     public int Id { get; }
     public string Name { get; }
     public int ManufactureYear { get; }
-    public int FlightCount { get; }
+    public int FlightCount { get; set; }
     private Dictionary<Categories, int> _categoriesDict;
     private static List<Airplane> _airplaneList = new List<Airplane>();
 
@@ -234,19 +234,31 @@ public class Airplane
         int inputId;
         do
         {
-            Console.Write("Unesi ime: ");
-            var inputPlane = Console.ReadLine()!.ToLower();
-            formattedInput=Helper.ReturnFormattedInput(inputPlane);
-            var exist = PlaneExists(formattedInput);
-            if (exist)
-                return _airplaneList.Find(plane => plane.Name == formattedInput);
-            else
-                Console.WriteLine("Ne postoji avion s unesenim imenom.");
+            var searchRes=FormatAndSearchByName();
+            if (searchRes == -1) continue;
+
+            return _airplaneList.Find(plane => plane.Id == searchRes);
+
         } while (Helper.ConfirmationMessage("ponovno unijeti ime"));
 
         return null;
     }
 
+    public static int FormatAndSearchByName()
+    {
+        Console.Write("Unesi ime: ");
+        var inputPlane = Console.ReadLine()!.ToLower();
+        var formattedInput=Helper.ReturnFormattedInput(inputPlane);
+        var exist = PlaneExists(formattedInput);
+        if (exist)
+            return _airplaneList.FindIndex(plane => plane.Name == formattedInput);
+        else
+        {
+            Console.WriteLine("Ne postoji avion s unesenim imenom.");
+            return -1;
+        }
+ 
+    }
     public static bool IsAirplaneListEmpty()
     {
         return _airplaneList.Count == 0;
@@ -328,5 +340,10 @@ public class Airplane
             _airplaneList.RemoveAll(plane=>plane.Id == planeForDeletion.Id);
             Console.WriteLine("Uspješno brisanje aviona: {0} u trenutku: {1}",planeForDeletion.Name,DateTime.Now);
         }        
+    }
+
+    public static Airplane ListAt(int index)
+    {
+        return _airplaneList[index];
     }
 }

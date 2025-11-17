@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Data;
+using System.Linq.Expressions;
 using Internship_3_OOP.ClassDirectory;
 namespace Internship_3_OOP;
 
@@ -45,7 +46,7 @@ class Program
                         PassengerMenu();
                         break;
                     case 2:
-                        Console.WriteLine("Uspješan odabir izbornika za putnike.\n");
+                        Console.WriteLine("Uspješan odabir izbornika za letove.\n");
                         FlightMenu();
                         break;
                     case 3:
@@ -222,6 +223,7 @@ class Program
     {
         while (true)
         {
+            Console.Clear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Prikaz svih letova\n");
             Console.WriteLine("2 - Dodavanje leta\n");
@@ -236,21 +238,12 @@ class Program
                         MainMenu();
                         break;
                     case 1:
-                        Console.WriteLine("Uspješan odabir.Registracija putnika.\n");
+                        Console.WriteLine("Uspješan odabir.\n");
                         Flight.AddFlight();
                         Helper.WaitingUser();
                         break;
                     case 2:
-                        if (Passenger.IsPassengerListEmpty())
-                        {
-                            Console.WriteLine("Moraš prvo registrirati nekog korisnika prije nego što možeš pristupiti prijavi.");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Uspješan odabir.Prijava putnika\n");
-                            PassengerLogin(false);                           
-                        }
-
+                        Flight.AddFlight();
                         Helper.WaitingUser();
                         break;
                     default:
