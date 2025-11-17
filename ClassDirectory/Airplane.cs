@@ -31,7 +31,7 @@ public class Airplane
         _airplaneList.Add(this);
     }
     
-    public static Airplane AddAirplane()
+    public static Airplane? AddAirplane()
     {
         var name = AirplaneNameInput();
         var manufactureYear = Helper.YearInput("izrade aviona");
@@ -41,8 +41,15 @@ public class Airplane
         {
             Airplane.CategoriesInputNew(categoriesDict);
         } while (categoriesDict.Count!=((int)Categories.Vip) && Helper.ConfirmationMessage("unijeti novu kategoriju"));
-        return new Airplane(name,manufactureYear, categoriesDict);
-        
+
+        if (Helper.ConfirmationMessage("dodati novi avion"))
+        {
+            return new Airplane(name,manufactureYear, categoriesDict);            
+        }
+
+        return null;
+
+
     }
 
     public static string AirplaneNameInput()
@@ -114,13 +121,12 @@ public class Airplane
     {
         while (true)
         {
-            Console.Write("\nBroj sjedećih mjesta: ");
+            Console.Write("\nBroj sjedećih mjesta.Mora biti veći od nule: ");
             if (int.TryParse(Console.ReadLine()!.Trim(), out var inputSeats) && inputSeats > 0)
             {
                 return inputSeats;
             }
-            else if(inputSeats<=0) Console.WriteLine("Pogrešan unos sjedala.Broj mora biti veći od nula.");
-            else Console.WriteLine("Pogrešan format unosa.");           
+            else if(inputSeats<=0) Console.WriteLine("Pogrešan unos broja sjedećih mjesta.");
         }
     }
     public static void AirplaneOutput()
@@ -148,6 +154,7 @@ public class Airplane
     { 
         while (true)
         {
+            Console.Clear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Pretraživanje aviona po id-u\n");
             Console.WriteLine("2 - Pretraživanja aviona po nazivu\n");
