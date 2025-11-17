@@ -43,6 +43,10 @@ class Program
                         Console.WriteLine("Uspješan odabir izbornika za putnike.\n");
                         PassengerMenu();
                         break;
+                    case 3:
+                        Console.WriteLine("Uspješan odabir izbornika za avione.\n");
+                        AirplaneMenu();
+                        break;                        
                     default:
                         Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
                         break;
@@ -131,7 +135,44 @@ class Program
         if(password == "")
             Console.WriteLine("Neuspješna prijava pokušaj ponovno kasnije.\n");
     }
-    
+
+    static void AirplaneMenu()
+    {
+        while (true)
+        {
+            Console.WriteLine("\n----------------------");
+            Console.WriteLine("1 - Prikaz svih aviona\n");
+            Console.WriteLine("2 - Dodavanje aviona\n");
+            Console.WriteLine("3 - Pretraživanje aviona\n");
+            Console.WriteLine("4 - Brisanje aviona\n");
+            Console.WriteLine("0 - Povratak na glavni izbornik");
+            Console.WriteLine("----------------------\n");
+            if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
+            {
+                switch (inputMainMenu)
+                {
+                    case 0:
+                        Console.WriteLine("Uspješan odabir.Povratak na glavni izbornik.\n");
+                        MainMenu();
+                        break;
+                    case 1:
+                        Console.WriteLine("Uspješan odabir.Prikaz svih aviona.\n");
+                        Helper.WaitingUser();
+                        break;
+                    case 2:
+                        Helper.WaitingUser();
+                        break;
+                    default:
+                        Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nPogrešan tip podatka->unesi cijeli broj.");
+            }
+        }        
+    }
     
 }
     

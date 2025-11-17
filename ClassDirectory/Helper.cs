@@ -3,6 +3,7 @@ using System;
 using System.Text.RegularExpressions;
 public class Helper
 {
+    private static int _idCounter = 0;
     private enum GenderEnum
     {
         Male='M',
@@ -112,5 +113,10 @@ public class Helper
             Console.WriteLine("\nUnos neispravan.Operacija se obustavljena.Povratak na prethodni izbornik nakon pritiska bilo koje tipke.\n");
             return false;
         }
+    }
+
+    public static int IdGenerator()
+    {
+        return _idCounter++;
     }
 }
