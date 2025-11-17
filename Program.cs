@@ -173,7 +173,7 @@ class Program
                         Console.WriteLine("Uspješan odabir.Dodavanje aviona.\n");
                         var isNewAirplaneCreated = Airplane.AddAirplane();
 
-                        if (!isNewAirplaneCreated)
+                        if (isNewAirplaneCreated)
                         {
                             Console.WriteLine("\nUspješno dodan novi avion.");
                             Console.WriteLine("Vrijeme stvaranja: {0}",Airplane.GetLastElement().creationTime);

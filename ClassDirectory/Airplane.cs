@@ -46,7 +46,7 @@ public class Airplane
             _airplaneList.Add(new Airplane(name,manufactureYear, categoriesDict));
             return true;
         }
-
+        
         return false;
 
 
@@ -256,6 +256,12 @@ public class Airplane
     {
         while (true)
         {
+            if (IsAirplaneListEmpty())
+            {
+                Console.WriteLine("\nLista aviona je prazna.Ne možeš više brisati.Povratak na izbornik za avione nakon pritiska tipke.");
+                Helper.WaitingUser();
+                Program.AirplaneMenu();
+            }
             Console.Clear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Brisanje aviona po id-u\n");
