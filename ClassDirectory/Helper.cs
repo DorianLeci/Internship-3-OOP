@@ -84,20 +84,23 @@ public class Helper
     
     public static bool ConfirmationMessage(string messageType)
     {
-        Console.WriteLine("\nŽeliš li {0} -- y/n. Ako je unos krajnjeg odabira neispravan ili je odabir 'n' operacija se obustavlja.\n", messageType);
-        if (char.TryParse(Console.ReadLine()?.Trim().ToLower(), out var inputChar) && inputChar == 'y')
-            return true;
-        else if (inputChar == 'n')
+        while (true)
         {
-            Console.WriteLine(
-                "\nOperacija obustavljena.Povratak na prethodni izbornik nakon pritiska bilo koje tipke.\n");
-            return false;
+            Console.WriteLine("\nŽeliš li {0} -- y/n.\n", messageType);
+            var charInput=Console.ReadKey().KeyChar;
+            switch (charInput)
+            {
+                case 'y':
+                    return true;
+                case 'n':
+                    Console.WriteLine("\nOperacija obustavljena.\n");
+                    return false;
+                default:
+                    Console.WriteLine("Pogrešan unos.Pokušaj ponovno.\n");
+                    break;
+            }            
         }
-        else
-        {
-            Console.WriteLine("\nUnos neispravan.Operacija se obustavljena.Povratak na prethodni izbornik nakon pritiska bilo koje tipke.\n");
-            return false;
-        }
+
     }
 
     public static int IdGenerator()

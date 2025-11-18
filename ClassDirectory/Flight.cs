@@ -40,10 +40,9 @@ public class Flight
         var airplane = ChooseAirplane();
         airplane.FlightCount++;
 
-        if (Helper.ConfirmationMessage("dodati novi let"))
-        {
-            _flightList.Add(new Flight(id, name, departureDate, arrivalDate,distance, flightTime, airplane));
-        }
+        if (!Helper.ConfirmationMessage("dodati novi let"))
+            return;
+        else _flightList.Add(new Flight(id, name, departureDate, arrivalDate,distance, flightTime, airplane));
 
     }
 

@@ -39,88 +39,106 @@ public class Airplane
         do
         {
             Airplane.CategoriesInputNew(categoriesDict);
-        } while (categoriesDict.Count!=((int)Categories.Vip) && Helper.ConfirmationMessage("unijeti novu kategoriju"));
+        } while (categoriesDict.Count<=((int)Categories.Vip) && Helper.ConfirmationMessage("unijeti novu kategoriju"));
 
-        if (Helper.ConfirmationMessage("dodati novi avion"))
-        {
-            _airplaneList.Add(new Airplane(name,manufactureYear, categoriesDict));
-            return true;
-        }
+        if (!Helper.ConfirmationMessage("dodati novi avion"))
+            return false;
         
-        return false;
-
-
+        _airplaneList.Add(new Airplane(name,manufactureYear, categoriesDict));
+        return true;
     }
 
-    public static Airplane GetLastElement()
+    public static Airplane? GetLastElement()
     {
-        return _airplaneList.Last();
+        return (_airplaneList.Count > 0) ? _airplaneList.Last() : null;
     }
-    public static string AirplaneNameInput()
+    private static string AirplaneNameInput()
     {
         while (true)
         {
             Console.Write("\nUnesi ime aviona: ");
             var inputPlane = Console.ReadLine()!.ToLower();
             var removed=Helper.RemoveWhiteSpace(inputPlane);
-            var formattedInput = Helper.ReturnFormattedInput(inputPlane);
-            if (ValidateAirplaneName(removed,formattedInput))
+            if (!ValidateAirplaneName(removed))
             {
-                return formattedInput;
+                Console.WriteLine("Pogrešan format unosa.\n");
+                continue;
             }
-            else Console.WriteLine("Pogrešan unos.\n");
+            
+            var formattedInput = Helper.ReturnFormattedInput(inputPlane);
+            if (!Airplane.PlaneExists(formattedInput)) return formattedInput;
+            
+            Console.WriteLine("Ime već postoji u sustavu.Mora biti jedinstveno.");
+
         }
 
     }
 
 
-    private static bool ValidateAirplaneName(string inputPlane,string formattedInputPlane)
+    private static bool ValidateAirplaneName(string inputPlane)
     {
-
-        if(Airplane.PlaneExists(formattedInputPlane))
-        {
-            Console.WriteLine("Ime već postoji u sustavu.Mora biti jedinstveno.");
-            return false;               
-        }
-            
         return (!string.IsNullOrEmpty(inputPlane) && inputPlane.All(ch => char.IsLetter(ch) || char.IsDigit(ch)));  
     }
     private static bool PlaneExists(string inputName)
     {
-        return _airplaneList.Any(plane => plane.Name== inputName);
+        return (_airplaneList.Count>0) && _airplaneList.Any(plane => plane.Name== inputName);
     }
     private static void CategoriesInputNew(Dictionary<Categories, int> categoriesDict)
     {
-        while (true)
-        {
-            Console.Write("\nKategorija leta: ");
-            var inputCategory = Console.ReadLine()!.ToLower().Trim();
+            CategoryPrint();
+            Console.Write("\nKategorija leta (unesi broj kategorije): ");
 
-            if (CategoriesCheckNew(inputCategory,categoriesDict))
+            if (!CategoriesFormatCheck(out var inputCategory))
             {
-                Console.WriteLine("Uspješan unos kategorije.\n");
+                Console.WriteLine("\nPogrešan format unosa.\n");
                 return;
             }
-            else Console.WriteLine("Pogrešan unos kategorije.");
-          
-        }
-    }
-    private static bool CategoriesCheckNew(string inputCategory,Dictionary<Categories, int> categoriesDict)
-    {
-        if (Enum.TryParse<Categories>(inputCategory, true, out var categoryEnumVar)
-            && Enum.IsDefined(typeof(Categories), categoryEnumVar) && !categoriesDict.ContainsKey(categoryEnumVar))
-        {
-            Console.WriteLine("Kategorija: {0}",categoryEnumVar);
+
+            if (!IsDefinedInEnum(inputCategory))
+            {
+                Console.WriteLine("\nTa kategorija nije navedena.\n");
+                return;
+            }
+
+            if (IsCategoryAdded(categoriesDict,inputCategory))
+            {
+                Console.WriteLine("\nKategorija je već unesena.\n");
+                return;
+            }
+            
+            Console.WriteLine("\nUnesena Kategorija: {0}",inputCategory);
             var seats=NumberOfSeatsInput();
-            categoriesDict.Add(categoryEnumVar, seats);
-            return true;
-        }
-        else if(categoriesDict.ContainsKey(categoryEnumVar))
-            Console.WriteLine("Kategorija {0} je već unesena.",categoryEnumVar);
-        return false;
-
+            categoriesDict.Add(inputCategory, seats);
+            
     }
 
+    private static void CategoryPrint()
+    {
+        var i = 0;
+        Console.WriteLine("\nIspis mogućih kategorija leta\n");
+        foreach (var cat in Enum.GetValues(typeof(Categories)))
+        {
+            Console.WriteLine("{0} - {1}",i,cat);
+            i++;
+        }
+    }
+
+    private static bool CategoriesFormatCheck(out Categories inputCategory)
+    {
+        var input = Console.ReadKey().KeyChar;
+        return Enum.TryParse<Categories>(input.ToString(),true, out inputCategory);
+    }
+
+    private static bool IsDefinedInEnum(Categories inputCategory)
+    {
+        return Enum.IsDefined(typeof(Categories), inputCategory);
+    }
+
+    private static bool IsCategoryAdded(Dictionary<Categories, int> categoriesDict,Categories inputCategory)
+    {
+        return categoriesDict.ContainsKey(inputCategory);
+    }
+    
     private static int NumberOfSeatsInput()
     {
         while (true)

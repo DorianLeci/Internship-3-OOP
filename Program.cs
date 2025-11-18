@@ -181,8 +181,8 @@ class Program
                         if (isNewAirplaneCreated)
                         {
                             Console.WriteLine("\nUspješno dodan novi avion.");
-                            Console.WriteLine("Vrijeme stvaranja: {0}",Airplane.GetLastElement().creationTime);
-                            Airplane.GetLastElement().FormattedAirplaneOutput();                           
+                            Console.WriteLine("Vrijeme stvaranja: {0}",Airplane.GetLastElement()?.creationTime);
+                            Airplane.GetLastElement()?.FormattedAirplaneOutput();                           
                         }
                         else Console.WriteLine("Nije dodan novi avion.");
                         
