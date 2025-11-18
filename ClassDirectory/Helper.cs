@@ -118,4 +118,28 @@ public class Helper
         Console.WriteLine(message);
         Thread.Sleep(1000);
     }
+
+    public static bool IsIdValid(out int inputId)
+    {
+        return int.TryParse(Console.ReadLine()?.Trim(), out inputId);
+    }
+    public static int FormatAndSearchByName<T>(List<T> objectList) where T : IHasName
+    {
+        Console.Write("\nUnesi ime: ");
+        
+        var inputItem = Console.ReadLine()!.ToLower();
+        var formattedInput=(typeof(T)==typeof(Airplane)? Helper.ReturnFormattedInput(inputItem):RemoveWhiteSpace(inputItem));
+        
+        var exist = Helper.ObjectExists(formattedInput,objectList);
+        if (!exist)
+            return -1;
+
+        return objectList.FindIndex(item => 
+            string.Equals(item.Name, formattedInput, StringComparison.OrdinalIgnoreCase));
+
+    }
+    public static bool ObjectExists<T>(string inputName,List<T> objectList) where T : IHasName
+    {
+        return (objectList.Count > 0) && objectList.Any(item => string.Equals(item.Name,inputName,StringComparison.OrdinalIgnoreCase));
+    }
 }

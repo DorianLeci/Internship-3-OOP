@@ -9,7 +9,7 @@ public enum Categories
     Business,
     Vip
 }
-public class Airplane
+public class Airplane:IHasName
 {
     public int Id { get; }
     public string Name { get; }
@@ -73,7 +73,7 @@ public class Airplane
             }
             
             var formattedInput = Helper.ReturnFormattedInput(inputPlane);
-            if (!Airplane.PlaneExists(formattedInput)) return formattedInput;
+            if (!Helper.ObjectExists(formattedInput,_airplaneList)) return formattedInput;
             
             Console.WriteLine("Ime već postoji u sustavu.Mora biti jedinstveno.");
 
@@ -85,10 +85,6 @@ public class Airplane
     private static bool ValidateAirplaneName(string inputPlane)
     {
         return (!string.IsNullOrEmpty(inputPlane) && inputPlane.All(ch => char.IsLetter(ch) || char.IsDigit(ch)));  
-    }
-    private static bool PlaneExists(string inputName)
-    {
-        return (_airplaneList.Count>0) && _airplaneList.Any(plane => plane.Name== inputName);
     }
     private static void CategoriesInputNew(Dictionary<Categories, int> categoriesDict)
     {
@@ -250,36 +246,41 @@ public class Airplane
         do
         {
             Console.Write("\nUnesi id: ");
-                if(!int.TryParse(Console.ReadLine()?.Trim(), out var inputId))
-                    Console.WriteLine("Pogrešan format unosa.");
-                else
-                {
-                    var exist = _airplaneList.Any(plane => plane.Id == inputId);
-                    if (!exist)
-                    {
-                        Console.WriteLine("Avion s traženim id-om ne postoji");
-                        continue;
-                    }
-                    return _airplaneList[inputId];
+            if (!Helper.IsIdValid(out var inputId))
+            {
+                Console.WriteLine("Pogrešan format unosa.");
+                continue;               
+            }
 
-
-                }
-
+            var exist = _airplaneList.Any(plane => plane.Id == inputId);
+            if (!exist)
+            {
+                Console.WriteLine("Avion s traženim id-om ne postoji");
+                continue;
+            }
+            return _airplaneList.Find(plane=>plane.Id == inputId);
+                    
         } while (Helper.ConfirmationMessage("ponovno unijeti id"));
 
         return null;
-    } 
-    
+    }
+
+    public static  int LinkFlightAndAirplane()
+    {
+      return Helper.FormatAndSearchByName(_airplaneList);  
+    }
     private static Airplane? SearchByName()
     {
         Console.Clear();
         IdAndNameOfPlanes();
-        string formattedInput;
-        int inputId;
         do
         {
-            var searchIndex=FormatAndSearchByName();
-            if (searchIndex == -1) continue;
+            var searchIndex=Helper.FormatAndSearchByName(_airplaneList);
+            if (searchIndex == -1)
+            {
+                Console.WriteLine("\nAvion s tim imenom nije pronađen.\n");
+                continue;
+            }
 
             return _airplaneList[searchIndex];
 
@@ -287,20 +288,7 @@ public class Airplane
 
         return null;
     }
-
-    public static int FormatAndSearchByName()
-    {
-        Console.Write("\nUnesi ime: ");
-        var inputPlane = Console.ReadLine()!.ToLower();
-        var formattedInput=Helper.ReturnFormattedInput(inputPlane);
-        var exist = PlaneExists(formattedInput);
-        if (!exist)
-            return -1;           
-
-        return _airplaneList.FindIndex(plane => plane.Name == formattedInput);
-            
- 
-    }
+    
     public static bool IsAirplaneListEmpty()
     {
         return  _airplaneList.Count == 0;

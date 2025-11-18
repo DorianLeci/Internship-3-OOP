@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Internship_3_OOP.ClassDirectory;
 
-public class Flight
+public class Flight: IHasName
 {
     public int Id { get; }
     public string Name { get; }
@@ -58,13 +58,18 @@ public class Flight
         Console.WriteLine("\n--------------");
         foreach(var flight in _flightList)
         {
-            var depDateTimeString = flight.DepartureDate.ToString("yyyy-MM-dd HH:mm");
-            var arrDateTimeString=flight.ArrivalDate.ToString("yyyy-MM-dd HH:mm");
-            Console.WriteLine("{0} - {1} - {2} - {3} - {4} -{5} - {6}",flight.Id,flight.Name,depDateTimeString,arrDateTimeString,
-                flight.Distance,flight.FlightTime,flight.Airplane.Name);
+            flight.OutputForOneFlight();
         }
 
         Console.WriteLine("--------------\n");
+    }
+
+    private void OutputForOneFlight()
+    {
+        var depDateTimeString = this.DepartureDate.ToString("yyyy-MM-dd HH:mm");
+        var arrDateTimeString=this.ArrivalDate.ToString("yyyy-MM-dd HH:mm");
+        Console.WriteLine("{0} - {1} - {2} - {3} - {4} -{5} - {6}",this.Id,this.Name,depDateTimeString,arrDateTimeString,
+            this.Distance,this.FlightTime,this.Airplane.Name);        
     }
     private static string FlightNameInput()
     {
@@ -162,11 +167,10 @@ public class Flight
         while (true)
         {
             Console.WriteLine("Pridruži let avionu");
-            var searchIndex = Airplane.FormatAndSearchByName();
+            var searchIndex = Airplane.LinkFlightAndAirplane();
             if (searchIndex != -1) return Airplane.ListAt(searchIndex);
             
             Console.WriteLine("Ne postoji avion s unesenim imenom.\n");
-            continue;
         }
     }
 
@@ -187,6 +191,120 @@ public class Flight
                 continue;
             }
             return input;
+        }
+    }
+
+    public static void FlightSearch()
+    {
+        while (true)
+        {
+            if (IsFlightListEmpty())
+            {
+                Helper.MessagePrintAndSleep("\nLista letova je prazna.Ne možeš pretraživati.Povratak na izbornik za letove nakon pritiska tipke.");
+                Helper.WaitingUser();
+                return;
+            }
+            Console.Clear();
+            Console.WriteLine("\n----------------------");
+            Console.WriteLine("1 - Pretraživanje letova po id-u\n");
+            Console.WriteLine("2 - Pretraživanja letova po nazivu\n");
+            Console.WriteLine("0 - Povratak na izbornik za letove");
+            Console.WriteLine("----------------------\n");
+            Console.Write("\nUnos :");
+            var input=Console.ReadKey().KeyChar;
+                switch (input)
+                {
+                    case '0':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za letove.\n");
+                        Program.FlightMenu();
+                        break;
+                    case '1':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje po id-u.");
+                        var searchedFlightById = SearchById();
+                        if (searchedFlightById == null)
+                        {
+                            Helper.WaitingUser();
+                            break;
+                        }
+                        Helper.MessagePrintAndSleep("\nUspješan pronalazak aviona.");
+                        searchedFlightById.OutputForOneFlight();
+                        Helper.WaitingUser();
+                        break;
+                    case '2':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje po nazivu.\n");
+                        var searchedAirplaneByName = SearchByName();
+                        if (searchedAirplaneByName == null)
+                        {
+                            Helper.WaitingUser();
+                            break;
+                        }
+                        
+                        Helper.MessagePrintAndSleep("\nUspješan pronalazak aviona.");
+                        searchedAirplaneByName.OutputForOneFlight();
+                        Helper.WaitingUser();
+                        break;
+                    default:
+                        Helper.MessagePrintAndSleep("\nUnos nije ponuđenima.Unesi ponovno.\n");
+                        break;
+                }
+        }             
+    }
+
+    private static bool IsFlightListEmpty()
+    {
+        return _flightList.Count == 0;
+    }
+    private static Flight? SearchById()
+    {
+        Console.Clear();
+        AllAvailibleFlights();
+        do
+        {
+            Console.Write("\nUnesi id: ");
+            if (!Helper.IsIdValid(out var inputId))
+            {
+                Console.WriteLine("Pogrešan format unosa.");
+                continue;               
+            }
+            
+            var exist = _flightList.Any(plane => plane.Id == inputId);
+            if (!exist)
+            {
+                Console.WriteLine("Let s traženim id-om ne postoji");
+                continue;
+            }
+            return _flightList.Find(plane => plane.Id == inputId);
+                    
+        } while (Helper.ConfirmationMessage("ponovno unijeti id"));
+
+        return null;        
+    }
+
+    private static Flight? SearchByName()
+    {
+        Console.Clear();
+        AllAvailibleFlights();
+        do
+        {
+            var searchIndex=Helper.FormatAndSearchByName(_flightList);
+            if (searchIndex == -1)
+            {
+                Console.WriteLine("Let s traženim imenom ne postoji");
+                continue;
+            }
+
+            return _flightList[searchIndex];
+
+        } while (Helper.ConfirmationMessage("ponovno unijeti ime"));
+
+        return null;
+    }
+    private static void AllAvailibleFlights()
+    {
+        Console.WriteLine("Ispis svih dostupnih letova");
+        foreach (var flight in _flightList)
+        {
+            Console.WriteLine("{0} - {1} - {2}",flight.Id,flight.Name,flight.Airplane.Name);
         }
     }
 }

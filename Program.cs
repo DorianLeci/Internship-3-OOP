@@ -204,7 +204,7 @@ class Program
         }        
     }
 
-    static void FlightMenu()
+    public static void FlightMenu()
     {
         while (true)
         {
@@ -233,6 +233,11 @@ class Program
                         Flight.AddFlight();
                         Helper.WaitingUser();
                         break;
+                    case '3':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje novog leta.\n");
+                        Flight.FlightSearch();
+                        Helper.WaitingUser();
+                        break;                        
                     default:
                         Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
                         break;
