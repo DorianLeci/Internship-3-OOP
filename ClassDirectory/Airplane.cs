@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+
 namespace Internship_3_OOP.ClassDirectory;
 
 public enum Categories
@@ -169,9 +171,9 @@ public class Airplane
         Console.WriteLine("\n-----------");
         Console.WriteLine("{0} - {1} - {2} - {3}",this.Id,this.Name,this.ManufactureYear,this.FlightCount);
         Console.Write("Kategorije: [");
-        foreach (var category in this._categoriesDict.Keys)
+        foreach (var kvPair in this._categoriesDict)
         {
-            Console.Write("{0} ",category);
+            Console.Write("{0} - {1}//",kvPair.Key,kvPair.Value);
         }
         Console.Write("]\n");
         Console.WriteLine("-----------\n");
@@ -181,56 +183,62 @@ public class Airplane
     { 
         while (true)
         {
+            if (IsAirplaneListEmpty())
+            {
+                Helper.MessagePrintAndSleep("\nLista aviona je prazna.Ne možeš pretraživati.Povratak na izbornik za avione nakon pritiska tipke.");
+                Helper.WaitingUser();
+                return;
+            }
             Console.Clear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Pretraživanje aviona po id-u\n");
             Console.WriteLine("2 - Pretraživanja aviona po nazivu\n");
             Console.WriteLine("0 - Povratak na izbornik za avione");
             Console.WriteLine("----------------------\n");
-            if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
-            {
-                switch (inputMainMenu)
+            Console.Write("Unos :");
+            var input=Console.ReadKey().KeyChar;
+                switch (input)
                 {
-                    case 0:
-                        Console.WriteLine("Uspješan odabir.Povratak na izbornik za avione.\n");
+                    case '0':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za avione.\n");
                         Program.AirplaneMenu();
                         break;
-                    case 1:
-                        Console.WriteLine("Uspješan odabir.Pretraživanje po id-u.");
+                    case '1':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje po id-u.");
                         var searchedAirplaneById = SearchById();
-                        if (searchedAirplaneById != null)
+                        if (searchedAirplaneById == null)
                         {
-                            Console.WriteLine("Uspješan pronalazak aviona.");
-                            searchedAirplaneById.FormattedAirplaneOutput();
+                            Helper.MessagePrintAndSleep("\nNe postoji avion s unesenim id-om.");
+                            Helper.WaitingUser();
+                            break;
                         }
-                        else Console.WriteLine("Ne postoji avion s unesenim id-om.");
-                        Helper.WaitingUser();
+                        Helper.MessagePrintAndSleep("\nUspješan pronalazak aviona.");
+                        searchedAirplaneById.FormattedAirplaneOutput();
                         break;
-                    case 2:
-                        Console.WriteLine("Uspješan odabir.Pretraživanje po nazivu.\n");
+                    case '2':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje po nazivu.\n");
                         var searchedAirplaneByName = SearchByName();
-                        if (searchedAirplaneByName != null)
+                        if (searchedAirplaneByName == null)
                         {
-                            Console.WriteLine("Uspješan pronalazak aviona.");
-                            searchedAirplaneByName.FormattedAirplaneOutput();
+                            Helper.MessagePrintAndSleep("\nNe postoji avion s unesenim nazivom.");
+                            Helper.WaitingUser();
+                            break;
                         }
-                        else Console.WriteLine("Ne postoji avion s unesenim nazivom.");                        
+                        
+                        Helper.MessagePrintAndSleep("\nUspješan pronalazak aviona.");
+                        searchedAirplaneByName.FormattedAirplaneOutput();
                         Helper.WaitingUser();
                         break;
                     default:
-                        Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
+                        Helper.MessagePrintAndSleep("\nUnos nije ponuđenima.Unesi ponovno.\n");
                         break;
                 }
-            }
-            else
-            {
-                Console.WriteLine("\nPogrešan tip podatka->unesi cijeli broj.");
-            }
         }     
     }
 
     private static Airplane? SearchById()
     {
+        Console.Clear();
         do
         {
             Console.Write("Unesi id: ");
@@ -253,14 +261,15 @@ public class Airplane
     
     private static Airplane? SearchByName()
     {
+        Console.Clear();
         string formattedInput;
         int inputId;
         do
         {
-            var searchRes=FormatAndSearchByName();
-            if (searchRes == -1) continue;
+            var searchIndex=FormatAndSearchByName();
+            if (searchIndex == -1) continue;
 
-            return _airplaneList.Find(plane => plane.Id == searchRes);
+            return _airplaneList[searchIndex];
 
         } while (Helper.ConfirmationMessage("ponovno unijeti ime"));
 
@@ -269,27 +278,26 @@ public class Airplane
 
     public static int FormatAndSearchByName()
     {
-        Console.Write("Unesi ime: ");
+        Console.Write("\nUnesi ime: ");
         var inputPlane = Console.ReadLine()!.ToLower();
         var formattedInput=Helper.ReturnFormattedInput(inputPlane);
         var exist = PlaneExists(formattedInput);
-        if (exist)
-            return _airplaneList.FindIndex(plane => plane.Name == formattedInput);
-        else
+        if (!exist)
         {
-            Console.WriteLine("Ne postoji avion s unesenim imenom.");
-            return -1;
+            Console.WriteLine("\nNe postoji avion s unesenim imenom.");
+            return -1;           
         }
+        return _airplaneList.FindIndex(plane => plane.Name == formattedInput);
+            
  
     }
     public static bool IsAirplaneListEmpty()
     {
-        return _airplaneList.Count == 0;
+        return  _airplaneList.Count == 0;
     }
 
     public static void DeleteAirplane()
     {
-        Console.Clear();
         while (true)
         {
             Console.Clear();
@@ -336,17 +344,16 @@ public class Airplane
         var planeForDeletion = SearchById();
         if (planeForDeletion == null)
         {
-            Console.WriteLine("Ne postoji avion s unesenim id-om.");
+            Console.WriteLine("\nNe postoji avion s unesenim id-om.");
             return;
         }
 
         if (!Helper.ConfirmationMessage("obrisati avion"))
-        {
-            Console.WriteLine("\nOdustaješ od brisanja aviona.\n");
-        }
+            return;
+        
         _airplaneList.RemoveAll(plane=>plane.Id == planeForDeletion.Id);
         
-        Console.WriteLine("Uspješno brisanje aviona u trenutku: {0}",DateTime.Now);
+        Console.WriteLine("\nUspješno brisanje aviona u trenutku: {0}",DateTime.Now);
     }
 
     private static void DeleteByName()
@@ -355,15 +362,14 @@ public class Airplane
         var planeForDeletion = SearchByName();
         if (planeForDeletion == null)
         {
-            Console.WriteLine("Ne postoji avion s unesenim imenom.");
+            Console.WriteLine("\nOdustao si od brisanja.");
             return;
         }
 
-        if (Helper.ConfirmationMessage("obrisati avion"))
-        {
-            _airplaneList.RemoveAll(plane=>plane.Id == planeForDeletion.Id);
-            Console.WriteLine("Uspješno brisanje aviona: {0} u trenutku: {1}",planeForDeletion.Name,DateTime.Now);
-        }        
+        if (!Helper.ConfirmationMessage("obrisati avion")) return;
+        
+        _airplaneList.RemoveAll(plane=>plane.Name == planeForDeletion.Name);
+        Console.WriteLine("\nUspješno brisanje aviona: {0} u trenutku: {1}",planeForDeletion.Name,DateTime.Now);
     }
 
     public static Airplane ListAt(int index)

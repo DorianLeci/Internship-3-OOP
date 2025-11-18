@@ -60,6 +60,7 @@ public class Seed
         
         var flight1 = new Flight("CR789", depDateTime, arrDateTime, 150, flightTime, _airplanes[1]);
         flight1.AddToList();
+        _airplanes[1].FlightCount++;
 
         depDate = new DateOnly(2025, 12, 12);
         depTime = new TimeOnly(12,40);
@@ -67,7 +68,8 @@ public class Seed
         arrTime = new TimeOnly(03,40);
         depDateTime=depDate.ToDateTime(depTime);
         arrDateTime = arrDate.ToDateTime(arrTime);
-        flightTime = (depDateTime - arrDateTime).Duration();   
+        flightTime = (depDateTime - arrDateTime).Duration();
+        _airplanes[2].FlightCount++;
         
         var flight2 = new Flight("CR800", depDateTime, arrDateTime, 150, flightTime, _airplanes[2]);
         flight2.AddToList();
