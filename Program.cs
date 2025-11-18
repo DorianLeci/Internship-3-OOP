@@ -224,11 +224,12 @@ class Program
                         MainMenu();
                         break;
                     case '1':
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.\n");
-                        Flight.AddFlight();
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova\n");
+                        Flight.FlightFormattedOutput();
                         Helper.WaitingUser();
                         break;
                     case '2':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Dodavanje novog leta.\n");
                         Flight.AddFlight();
                         Helper.WaitingUser();
                         break;

@@ -36,6 +36,7 @@ public class Flight
     }
     public static void AddFlight()
     {
+        Console.Clear();
         var name = FlightNameInput();
         var distance = FlightDistanceInput();
         var departureDate = DepartureDateInput();
@@ -46,10 +47,25 @@ public class Flight
 
         if (!Helper.ConfirmationMessage("dodati novi let"))
             return;
-        else _flightList.Add(new Flight(name, departureDate, arrivalDate,distance, flightTime, airplane));
+
+        Console.WriteLine("\nUspješno dodavanje novog leta {0} koji je povezan s avionom {1}:",name,airplane.Name);
+         _flightList.Add(new Flight(name, departureDate, arrivalDate,distance, flightTime, airplane));
 
     }
 
+    public static void FlightFormattedOutput()
+    {
+        Console.WriteLine("\n--------------");
+        foreach(var flight in _flightList)
+        {
+            var depDateTimeString = flight.DepartureDate.ToString("yyyy-MM-dd HH:mm");
+            var arrDateTimeString=flight.ArrivalDate.ToString("yyyy-MM-dd HH:mm");
+            Console.WriteLine("{0} - {1} - {2} - {3} - {4} -{5} - {6}",flight.Id,flight.Name,depDateTimeString,arrDateTimeString,
+                flight.Distance,flight.FlightTime,flight.Airplane.Name);
+        }
+
+        Console.WriteLine("--------------\n");
+    }
     private static string FlightNameInput()
     {
         while (true)
@@ -78,10 +94,16 @@ public class Flight
         while (true)
         {
             Console.Write("Unesi kada let polazi.(YYYY-MM-DD HH:mm): ");
-            if (FlightDateCheck(out var inputDateTime))
-                return inputDateTime;
-            
-            else  Console.WriteLine("\nPogrešan unos datuma.");
+            if (!FlightFormatCheck(out var inputDateTime))
+            {
+                Console.WriteLine("\nPogrešan format.\n");
+                continue;
+            }
+
+            if (FlightDateTimeCheck(inputDateTime)) return inputDateTime;
+            Console.WriteLine("Polazak novog leta mora biti barem 24h od trenutnog vremena.\n");
+            continue;
+
         }
     }
     private static DateTime ArrivalDateInput(DateTime departureDateTime)
@@ -89,7 +111,7 @@ public class Flight
         while (true)
         {
             Console.Write("Unesi kada let završava.(YYYY-MM-DD HH:mm) ");
-            if (!FlightDateCheck(out var inputDateTime))
+            if (!FlightFormatCheck(out var inputDateTime))
             {
                 Console.WriteLine("Pogrešan format datuma.Pokušaj ponovno.\n");
                 continue;               
@@ -110,15 +132,19 @@ public class Flight
             return inputDateTime;
         }
     }
-    private static bool FlightDateCheck(out DateTime inputDateTime)
+    private static bool FlightFormatCheck(out DateTime inputDateTime)
     {
         var today = DateTime.Now;
         var input = Console.ReadLine()!.Trim();
 
         return DateTime.TryParseExact(input, "yyyy-MM-dd HH:mm",
-            CultureInfo.InvariantCulture, DateTimeStyles.None, out inputDateTime) && inputDateTime.Date>=today.Date;
+            CultureInfo.InvariantCulture, DateTimeStyles.None, out inputDateTime);
     }
 
+    private static bool FlightDateTimeCheck(DateTime depDateTime)
+    {
+        return (depDateTime-DateTime.Now).Duration().TotalHours>=24;
+    }
     private static bool CheckArrivalTime(DateTime arrivalDateTime,DateTime departureDateTime)
     {
         return (arrivalDateTime >departureDateTime);
@@ -163,5 +189,4 @@ public class Flight
             return input;
         }
     }
-    
 }
