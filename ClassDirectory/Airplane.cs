@@ -29,7 +29,11 @@ public class Airplane
         this.creationTime = DateTime.Now;
         this.updateTime = DateTime.Now;
     }
-    
+
+    public void AddToList()
+    {
+        _airplaneList.Add(this);
+    }
     public static bool AddAirplane()
     {
         Console.Clear();
@@ -336,11 +340,13 @@ public class Airplane
             return;
         }
 
-        if (Helper.ConfirmationMessage("obrisati avion"))
+        if (!Helper.ConfirmationMessage("obrisati avion"))
         {
-            _airplaneList.RemoveAll(plane=>plane.Id == planeForDeletion.Id);
-            Console.WriteLine("Uspješno brisanje aviona u trenutku: {0}",DateTime.Now);
+            Console.WriteLine("\nOdustaješ od brisanja aviona.\n");
         }
+        _airplaneList.RemoveAll(plane=>plane.Id == planeForDeletion.Id);
+        
+        Console.WriteLine("Uspješno brisanje aviona u trenutku: {0}",DateTime.Now);
     }
 
     private static void DeleteByName()

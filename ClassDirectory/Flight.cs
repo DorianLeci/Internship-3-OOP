@@ -17,9 +17,9 @@ public class Flight
     public Airplane Airplane { get; }
     private static List<Flight> _flightList = new List<Flight>();
 
-    public Flight(int id, string name, DateTime departureDate,DateTime arrivalDate,double distance,TimeSpan flightTime,Airplane airplane)
+    public Flight(string name, DateTime departureDate,DateTime arrivalDate,double distance,TimeSpan flightTime,Airplane airplane)
     {
-        this.Id = id; 
+        this.Id = Helper.IdGenerator();
         this.Name = name;
         this.DepartureDate = departureDate;
         this.ArrivalDate = arrivalDate;
@@ -29,9 +29,13 @@ public class Flight
         this.CreationTime = DateTime.Now;
         this.UpdateTime = DateTime.Now;
     }
+
+    public void AddToList()
+    {
+        _flightList.Add(this);
+    }
     public static void AddFlight()
     {
-        var id = Helper.IdGenerator();
         var name = FlightNameInput();
         var distance = FlightDistanceInput();
         var departureDate = DepartureDateInput();
@@ -42,7 +46,7 @@ public class Flight
 
         if (!Helper.ConfirmationMessage("dodati novi let"))
             return;
-        else _flightList.Add(new Flight(id, name, departureDate, arrivalDate,distance, flightTime, airplane));
+        else _flightList.Add(new Flight(name, departureDate, arrivalDate,distance, flightTime, airplane));
 
     }
 

@@ -9,19 +9,10 @@ class Program
 
     static void Main(string[] args)
     {
-        DataSeed();
+        Seed.DataSeed();
         MainMenu();
     }
-
-    static void DataSeed()
-    {
-        var pass1 = new Passenger(Guid.NewGuid(), "Dorian", "Leci", "zandzartz@gmail.com", "FujF48Ym#",
-            2004, 'M');
-        var pass2 = new Passenger(Guid.NewGuid(), "Nikola", "Filipović", "nfilip5@net.hr", "1234567#A",
-            2004, 'M');
-        var pass3 = new Passenger(Guid.NewGuid(), "Marija", "Hanić", "marijah@gmail.com", "123AbcdE#",
-            2005, 'F');
-    }
+    
     static void MainMenu()
     {
         while (true)
