@@ -12,7 +12,8 @@ public class Flight
     public DateTime ArrivalDate { get; }
     public double Distance { get; }
     public TimeSpan FlightTime { get; }
-    
+    public DateTime CreationTime { get; }
+    public DateTime UpdateTime { get; }
     public Airplane Airplane { get; }
     private static List<Flight> _flightList = new List<Flight>();
 
@@ -25,6 +26,8 @@ public class Flight
         this.Distance = distance;
         this.FlightTime = flightTime;
         this.Airplane = airplane;
+        this.CreationTime = DateTime.Now;
+        this.UpdateTime = DateTime.Now;
     }
     public static void AddFlight()
     {
@@ -36,8 +39,12 @@ public class Flight
         var flightTime = (arrivalDate - departureDate).Duration();
         var airplane = ChooseAirplane();
         airplane.FlightCount++;
-        
-        _flightList.Add(new Flight(id, name, departureDate, arrivalDate,distance, flightTime, airplane));
+
+        if (Helper.ConfirmationMessage("dodati novi let"))
+        {
+            _flightList.Add(new Flight(id, name, departureDate, arrivalDate,distance, flightTime, airplane));
+        }
+
     }
 
     private static string FlightNameInput()
@@ -59,7 +66,7 @@ public class Flight
     {
         while (true)
         {
-            Console.Write("Unesi kada je let pošao.(YYYY-MM-DD HH:mm) ");
+            Console.Write("Unesi kada je let pošao.(YYYY-MM-DD HH:mm): ");
             if (DateTime.TryParseExact(Console.ReadLine()!.Trim(),"yyyy-MM-dd HH:mm",CultureInfo.InvariantCulture,
                     DateTimeStyles.None,   out var inputDate) 
                 && inputDate >= DateTime.MinValue && inputDate <= DateTime.Today)
