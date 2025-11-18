@@ -54,11 +54,19 @@ public class Flight
             Console.Write("\nUnesi ime leta (npr. AA789 ili AB7894): ");
             var inputName = Console.ReadLine()!.Trim().ToUpper();
             inputName=Helper.RemoveWhiteSpace(inputName);
-            if (Regex.IsMatch(inputName, @"^[A-Z]{2}[0-9]{3,4}$") && !_flightList.Any(flight=>flight.Name==inputName))
+            
+            if (!Regex.IsMatch(inputName, @"^[A-Z]{2}[0-9]{3,4}$"))
             {
-                return inputName;
+                Console.WriteLine("Pogrešan format imena.\n");
+                continue;
             }
-            else Console.WriteLine("Pogrešan unos imena leta.\n");
+            if(_flightList.Count!=0 && _flightList.All(flight=>flight.Name==inputName))
+            {
+                Console.WriteLine("Već postoji let s istim imenom.Mora biti jedinstveno.\n");
+                continue;
+            }
+
+            return inputName;
         }
     }
 
@@ -66,30 +74,57 @@ public class Flight
     {
         while (true)
         {
-            Console.Write("Unesi kada je let pošao.(YYYY-MM-DD HH:mm): ");
-            if (DateTime.TryParseExact(Console.ReadLine()!.Trim(),"yyyy-MM-dd HH:mm",CultureInfo.InvariantCulture,
-                    DateTimeStyles.None,   out var inputDate) 
-                && inputDate >= DateTime.MinValue && inputDate <= DateTime.Today)
-                return inputDate;
-
+            Console.Write("Unesi kada let polazi.(YYYY-MM-DD HH:mm): ");
+            if (FlightDateCheck(out var inputDateTime))
+                return inputDateTime;
+            
             else  Console.WriteLine("\nPogrešan unos datuma.");
         }
     }
-    private static DateTime ArrivalDateInput(DateTime departureDate)
+    private static DateTime ArrivalDateInput(DateTime departureDateTime)
     {
         while (true)
         {
-            Console.Write("Unesi kada je let završio.(YYYY-MM-DD HH:mm) ");
-            if (DateTime.TryParseExact(Console.ReadLine()!.Trim(),"yyyy-MM-dd HH:mm",CultureInfo.InvariantCulture,
-                    DateTimeStyles.None,   out var inputDate) 
-                && inputDate >= DateTime.MinValue && inputDate <= DateTime.Today && inputDate>departureDate)
-                return inputDate;
-            else if(inputDate<=departureDate)
-                Console.WriteLine("\nAvion ne može sletjeti prije nego što je uzletio.");
-            else  Console.WriteLine("\nPogrešan unos datuma.");
+            Console.Write("Unesi kada let završava.(YYYY-MM-DD HH:mm) ");
+            if (!FlightDateCheck(out var inputDateTime))
+            {
+                Console.WriteLine("Pogrešan format datuma.Pokušaj ponovno.\n");
+                continue;               
+            }
+
+            if (!CheckArrivalTime(inputDateTime, departureDateTime))
+            {
+                Console.WriteLine("Vrijeme sletanja ne smije biti prije vremena polijetanja.\n");
+                continue;
+            }
+
+            if (!CheckFlightDuration(inputDateTime, departureDateTime))
+            {
+                Console.WriteLine("Let ne smije trajati duže od 24 sata.\n");
+                continue;
+            }
+            
+            return inputDateTime;
         }
     }
+    private static bool FlightDateCheck(out DateTime inputDateTime)
+    {
+        var today = DateTime.Now;
+        var input = Console.ReadLine()!.Trim();
 
+        return DateTime.TryParseExact(input, "yyyy-MM-dd HH:mm",
+            CultureInfo.InvariantCulture, DateTimeStyles.None, out inputDateTime) && inputDateTime.Date>=today.Date;
+    }
+
+    private static bool CheckArrivalTime(DateTime arrivalDateTime,DateTime departureDateTime)
+    {
+        return (arrivalDateTime >departureDateTime);
+    }
+
+    private static bool CheckFlightDuration(DateTime arrivalDateTime, DateTime departureDateTime)
+    {
+        return (departureDateTime - arrivalDateTime).Duration().TotalHours<=24;
+    }
     private static Airplane ChooseAirplane()
     {
         Console.WriteLine("Lista dostupnih aviona");
@@ -97,12 +132,12 @@ public class Flight
     
         while (true)
         {
-            Console.WriteLine("Pridruži let zrakoplovu");
+            Console.WriteLine("Pridruži let avionu");
             var searchIndex = Airplane.FormatAndSearchByName();
-            if (searchIndex!=-1)
-            {
-                return Airplane.ListAt(searchIndex);
-            }
+            if (searchIndex != -1) return Airplane.ListAt(searchIndex);
+            
+            Console.WriteLine("Ne postoji avion s unesenim imenom.\n");
+            continue;
         }
     }
 
@@ -110,10 +145,19 @@ public class Flight
     {
         while (true)
         {
-            Console.Write("Unesi prijeđenu udaljenost u KM: ");
-            if (Double.TryParse(Console.ReadLine(), out var inputDist) && inputDist > 0)
-                return inputDist;
-            else Console.WriteLine("Pogrešan unos kilometraže.\n");
+            Console.Write("Unesi prijeđenu udaljenost u km: ");
+            if (!Helper.DoubleInputCheck(out double input))
+            {
+                Console.WriteLine("Pogrešan format unosa.\n");
+                continue;
+            }
+
+            if (input <= 0)
+            {
+                Console.WriteLine("Prijeđeni put mora biti veći od 0 km.\n");
+                continue;
+            }
+            return input;
         }
     }
     

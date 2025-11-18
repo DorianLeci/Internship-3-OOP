@@ -104,4 +104,9 @@ public class Helper
     {
         return _idCounter++;
     }
+
+    public static bool DoubleInputCheck(out double input)
+    {
+        return Double.TryParse(Console.ReadLine()!.Trim(), out input);
+    }
 }
