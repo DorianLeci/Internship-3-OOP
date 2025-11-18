@@ -32,6 +32,7 @@ public class Airplane
     
     public static bool AddAirplane()
     {
+        Console.Clear();
         var name = AirplaneNameInput();
         var manufactureYear = Helper.YearInput("izrade aviona");
         var categoriesDict=new Dictionary<Categories, int>();
@@ -284,52 +285,50 @@ public class Airplane
 
     public static void DeleteAirplane()
     {
+        Console.Clear();
         while (true)
         {
+            Console.Clear();
             if (IsAirplaneListEmpty())
             {
                 Console.WriteLine("\nLista aviona je prazna.Ne možeš više brisati.Povratak na izbornik za avione nakon pritiska tipke.");
                 Helper.WaitingUser();
                 Program.AirplaneMenu();
             }
-            Console.Clear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Brisanje aviona po id-u\n");
             Console.WriteLine("2 - Brisanje aviona po nazivu\n");
             Console.WriteLine("0 - Povratak na izbornik za avione");
+            Console.Write("Unos: ");
             Console.WriteLine("----------------------\n");
-            if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
-            {
-                switch (inputMainMenu)
+            var input = Console.ReadKey().KeyChar;
+                switch (input)
                 {
-                    case 0:
-                        Console.WriteLine("Uspješan odabir.Povratak na izbornik za avione.\n");
+                    case '0':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za avione.\n");
                         Program.AirplaneMenu();
                         break;
-                    case 1:
-                        Console.WriteLine("Uspješan odabir.Brisanje po id-u.");
+                    case '1':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Brisanje po id-u.");
                         DeleteById();
                         Helper.WaitingUser();
                         break;
-                    case 2:
-                        Console.WriteLine("Uspješan odabir.Brisanje po nazivu.\n");
+                    case '2':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Brisanje po nazivu.\n");
                         DeleteByName();                      
                         Helper.WaitingUser();
                         break;
                     default:
-                        Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
+                        Console.WriteLine("\nUnos nije među ponuđenima.Unesi ponovno");
+                        Thread.Sleep(1000);
                         break;
                 }
-            }
-            else
-            {
-                Console.WriteLine("\nPogrešan tip podatka->unesi cijeli broj.");
-            }
         }             
     }
 
     private static void DeleteById()
     {
+        Console.Clear();
         var planeForDeletion = SearchById();
         if (planeForDeletion == null)
         {
@@ -346,6 +345,7 @@ public class Airplane
 
     private static void DeleteByName()
     {
+        Console.Clear();
         var planeForDeletion = SearchByName();
         if (planeForDeletion == null)
         {

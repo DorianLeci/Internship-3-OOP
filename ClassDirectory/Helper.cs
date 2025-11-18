@@ -112,4 +112,10 @@ public class Helper
     {
         return Double.TryParse(Console.ReadLine()!.Trim(), out input);
     }
+
+    public static void MessagePrintAndSleep(string message)
+    {
+        Console.WriteLine(message);
+        Thread.Sleep(1000);
+    }
 }

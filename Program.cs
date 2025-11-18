@@ -26,6 +26,7 @@ class Program
     {
         while (true)
         {
+            Console.Clear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Putnici\n");
             Console.WriteLine("2 - Letovi\n");
@@ -33,35 +34,30 @@ class Program
             Console.WriteLine("4 - Posada\n");
             Console.WriteLine("0 - Izlaz iz programa");
             Console.WriteLine("----------------------\n");
-            if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
+            Console.Write("Unos: ");
+            var input = Console.ReadKey().KeyChar;
+            switch (input)
             {
-                switch (inputMainMenu)
-                {
-                    case 0:
-                        Console.WriteLine("Uspješan odabir.Izlaz iz aplikacije\n");
-                        Environment.Exit(0);
-                        break;
-                    case 1:
-                        Console.WriteLine("Uspješan odabir izbornika za putnike.\n");
-                        PassengerMenu();
-                        break;
-                    case 2:
-                        Console.WriteLine("Uspješan odabir izbornika za letove.\n");
-                        FlightMenu();
-                        break;
-                    case 3:
-                        Console.WriteLine("Uspješan odabir izbornika za avione.\n");
-                        AirplaneMenu();
-                        break;                        
-                    default:
-                        Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
-                        break;
+                case '0':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Izlaz iz aplikacije");
+                    Environment.Exit(0);
+                    break;
+                case '1':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir izbornika za putnike.");
+                    PassengerMenu();
+                    break;
+                case '2':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir izbornika za letove.");
+                    FlightMenu();
+                    break;
+                case '3':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir izbornika za avione.");
+                    AirplaneMenu();
+                    break;                        
+                default:
+                    Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno");
+                    break;
                 }
-            }
-            else
-            {
-                Console.WriteLine("\nPogrešan tip podatka->unesi cijeli broj.");
-            }
         }
     }
 
@@ -69,46 +65,42 @@ class Program
     {
         while (true)
         {
+            Console.Clear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Registracija\n");
             Console.WriteLine("2 - Prijava\n");
             Console.WriteLine("0 - Povratak na glavni izbornik.");
             Console.WriteLine("----------------------\n");
-            if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
-            {
-                switch (inputMainMenu)
+            Console.Write("Unos: ");
+            var input = Console.ReadKey().KeyChar;
+                switch (input)
                 {
-                    case 0:
-                        Console.WriteLine("Uspješan odabir.Povratak na glavni izbornik.\n");
+                    case '0':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na glavni izbornik.\n");
                         MainMenu();
                         break;
-                    case 1:
-                        Console.WriteLine("Uspješan odabir.Registracija putnika.\n");
+                    case '1':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Registracija putnika.\n");
                         PassengerRegistration(true);
                         Helper.WaitingUser();
                         break;
-                    case 2:
+                    case '2':
                         if (Passenger.IsPassengerListEmpty())
                         {
                             Console.WriteLine("Moraš prvo registrirati nekog korisnika prije nego što možeš pristupiti prijavi.");
                         }
                         else
                         {
-                            Console.WriteLine("Uspješan odabir.Prijava putnika\n");
+                            Helper.MessagePrintAndSleep("Uspješan odabir.Prijava putnika\n");
                             PassengerLogin(false);                           
                         }
 
                         Helper.WaitingUser();
                         break;
                     default:
-                        Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
+                        Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno");
                         break;
                 }
-            }
-            else
-            {
-                Console.WriteLine("\nPogrešan tip podatka->unesi cijeli broj.");
-            }
         }
     }
 
@@ -154,68 +146,70 @@ class Program
             Console.WriteLine("4 - Brisanje aviona\n");
             Console.WriteLine("0 - Povratak na glavni izbornik");
             Console.WriteLine("----------------------\n");
-            if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
-            {
-                switch (inputMainMenu)
+            Console.Write("Unos: ");
+            var input = Console.ReadKey().KeyChar;
+                switch (input)
                 {
-                    case 0:
-                        Console.WriteLine("Uspješan odabir.Povratak na glavni izbornik.\n");
+                    case '0':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na glavni izbornik.\n");
                         MainMenu();
                         break;
-                    case 1:
-                        if(Airplane.IsAirplaneListEmpty())
-                            Console.WriteLine("Lista aviona je prazna.Ne možeš ih prikazati.\n");
-                        else
+                    case '1':
+                        if (Airplane.IsAirplaneListEmpty())
                         {
-                            Console.WriteLine("Uspješan odabir.Prikaz svih aviona.");
-                            Airplane.AirplaneOutput();                            
+                            Helper.MessagePrintAndSleep("\nLista aviona je prazna.Ne možeš ih prikazati.\n");
+                            Helper.WaitingUser();
+                            break;                           
                         }
+                        
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih aviona.");
+                        Airplane.AirplaneOutput();                            
 
                         Helper.WaitingUser();
                         break;
-                    case 2:
-                        
-                        Console.WriteLine("Uspješan odabir.Dodavanje aviona.\n");
+                    case '2':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Dodavanje aviona.\n");
                         var isNewAirplaneCreated = Airplane.AddAirplane();
 
-                        if (isNewAirplaneCreated)
+                        if (!isNewAirplaneCreated)
                         {
-                            Console.WriteLine("\nUspješno dodan novi avion.");
-                            Console.WriteLine("Vrijeme stvaranja: {0}",Airplane.GetLastElement()?.creationTime);
-                            Airplane.GetLastElement()?.FormattedAirplaneOutput();                           
+                            Console.WriteLine("\nNije dodan novi avion.");       
+                            Helper.WaitingUser();
+                            break;
                         }
-                        else Console.WriteLine("Nije dodan novi avion.");
+                        Console.Clear();
+                        Helper.MessagePrintAndSleep("\nUspješno dodan novi avion.");
+                        Console.WriteLine("Vrijeme stvaranja: {0}",Airplane.GetLastElement()?.creationTime);
+                        Airplane.GetLastElement()?.FormattedAirplaneOutput();  
                         
                         Helper.WaitingUser();
                         break;
-                    case 3:
-                        if(Airplane.IsAirplaneListEmpty())
-                            Console.WriteLine("Lista aviona je prazna.Ne možeš ih pretraživati.\n");
-                        else
+                    case '3':
+                        if (Airplane.IsAirplaneListEmpty())
                         {
-                            Console.WriteLine("Uspješan odabir.Pretraživanje aviona.");
-                            Airplane.AirplaneSearch();                            
+                            Helper.MessagePrintAndSleep("\nLista aviona je prazna.Ne možeš ih pretraživati.\n");
+                            Helper.WaitingUser();
+                            break;
                         }
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje aviona.");
+                        Airplane.AirplaneSearch();                            
                         Helper.WaitingUser();
                         break;
-                    case 4:
-                        if(Airplane.IsAirplaneListEmpty())
-                            Console.WriteLine("Lista aviona je prazna.Ne možeš ih brisati.\n");
-                        else
+                    case '4':
+                        if (Airplane.IsAirplaneListEmpty())
                         {
-                            Airplane.DeleteAirplane();
+                            Helper.MessagePrintAndSleep("\nLista aviona je prazna.Ne možeš ih brisati.\n");
+                            Helper.WaitingUser();
+                            break;
                         }
+                        
+                        Airplane.DeleteAirplane();
                         Helper.WaitingUser();
                         break;
                     default:
-                        Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
+                        Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno");
                         break;
                 }
-            }
-            else
-            {
-                Console.WriteLine("\nPogrešan tip podatka->unesi cijeli broj.");
-            }
         }        
     }
 
@@ -229,32 +223,28 @@ class Program
             Console.WriteLine("2 - Dodavanje leta\n");
             Console.WriteLine("0 - Povratak na glavni izbornik.");
             Console.WriteLine("----------------------\n");
-            if (int.TryParse(Console.ReadLine(), out int inputMainMenu))
-            {
-                switch (inputMainMenu)
+            Console.Write("Unos: ");
+            var input = Console.ReadKey().KeyChar;
+                switch (input)
                 {
-                    case 0:
-                        Console.WriteLine("Uspješan odabir.Povratak na glavni izbornik.\n");
+                    case '0':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na glavni izbornik.\n");
+                        Console.WriteLine();
                         MainMenu();
                         break;
-                    case 1:
-                        Console.WriteLine("Uspješan odabir.\n");
+                    case '1':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.\n");
                         Flight.AddFlight();
                         Helper.WaitingUser();
                         break;
-                    case 2:
+                    case '2':
                         Flight.AddFlight();
                         Helper.WaitingUser();
                         break;
                     default:
-                        Console.WriteLine("Unos nije među ponuđenima.Unesi ponovno");
+                        Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
                         break;
                 }
-            }
-            else
-            {
-                Console.WriteLine("\nPogrešan tip podatka->unesi cijeli broj.");
-            }
         }        
     }
 }
