@@ -85,13 +85,11 @@ public class Flight: IHasName
                 Console.WriteLine("Pogrešan format imena.\n");
                 continue;
             }
-            if(_flightList.Count!=0 && _flightList.All(flight=>flight.Name==inputName))
-            {
-                Console.WriteLine("Već postoji let s istim imenom.Mora biti jedinstveno.\n");
-                continue;
-            }
 
-            return inputName;
+            if (_flightList.Count <= 0 || !_flightList.Any(flight => flight.Name == inputName)) return inputName;
+            
+            Console.WriteLine("Već postoji let s istim imenom.Mora biti jedinstveno.\n");
+            
         }
     }
 
@@ -371,5 +369,16 @@ public class Flight: IHasName
         
         return !Helper.ConfirmationMessage("promijeniti datum i vrijeme dolazka leta.") 
             ? oldArrDateTime : ArrivalDateInput(depDateTime);
+    }
+    
+    public static void RemoveFlightsWithPlaneId(int planeId)
+    {
+        _flightList.RemoveAll(flight=>flight.Airplane.Id == planeId);
+    }
+    
+    public static string FindFlightsConnectedToPlane(int planeId)
+    {
+        var foundFlights = _flightList.FindAll(flight => flight.Airplane.Id == planeId);
+        return string.Join(", ",foundFlights.Select(flight=>flight.Id + " - " + flight.Name));
     }
 }
