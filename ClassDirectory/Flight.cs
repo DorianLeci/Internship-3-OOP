@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
@@ -8,12 +9,12 @@ public class Flight: IHasName
 {
     public int Id { get; }
     public string Name { get; }
-    public DateTime DepartureDate { get; }
-    public DateTime ArrivalDate { get; }
+    public DateTime DepartureDate { get; set; }
+    public DateTime ArrivalDate { get; set; }
     public double Distance { get; }
-    public TimeSpan FlightTime { get; }
+    public TimeSpan FlightTime { get; set; }
     public DateTime CreationTime { get; }
-    public DateTime UpdateTime { get; }
+    public DateTime UpdateTime { get; set; }
     public Airplane Airplane { get; }
     private static List<Flight> _flightList = new List<Flight>();
 
@@ -98,7 +99,7 @@ public class Flight: IHasName
     {
         while (true)
         {
-            Console.Write("Unesi kada let polazi.(YYYY-MM-DD HH:mm): ");
+            Console.Write("\nUnesi kada let polazi.(YYYY-MM-DD HH:mm): ");
             if (!FlightFormatCheck(out var inputDateTime))
             {
                 Console.WriteLine("\nPogrešan format.\n");
@@ -106,8 +107,7 @@ public class Flight: IHasName
             }
 
             if (FlightDateTimeCheck(inputDateTime)) return inputDateTime;
-            Console.WriteLine("Polazak novog leta mora biti barem 24h od trenutnog vremena.\n");
-            continue;
+            Console.WriteLine("\nPolazak novog leta mora biti barem 24h od trenutnog vremena.\n");
 
         }
     }
@@ -115,22 +115,22 @@ public class Flight: IHasName
     {
         while (true)
         {
-            Console.Write("Unesi kada let završava.(YYYY-MM-DD HH:mm) ");
+            Console.Write("\nUnesi kada let završava.(YYYY-MM-DD HH:mm) ");
             if (!FlightFormatCheck(out var inputDateTime))
             {
-                Console.WriteLine("Pogrešan format datuma.Pokušaj ponovno.\n");
+                Console.WriteLine("\nPogrešan format datuma.Pokušaj ponovno.\n");
                 continue;               
             }
 
             if (!CheckArrivalTime(inputDateTime, departureDateTime))
             {
-                Console.WriteLine("Vrijeme sletanja ne smije biti prije vremena polijetanja.\n");
+                Console.WriteLine("\nVrijeme sletanja ne smije biti prije vremena polijetanja.\n");
                 continue;
             }
 
             if (!CheckFlightDuration(inputDateTime, departureDateTime))
             {
-                Console.WriteLine("Let ne smije trajati duže od 24 sata.\n");
+                Console.WriteLine("\nLet ne smije trajati duže od 24 sata.\n");
                 continue;
             }
             
@@ -148,7 +148,7 @@ public class Flight: IHasName
 
     private static bool FlightDateTimeCheck(DateTime depDateTime)
     {
-        return (depDateTime-DateTime.Now).Duration().TotalHours>=24;
+        return depDateTime>DateTime.Now && (depDateTime-DateTime.Now).Duration().TotalHours>=24;
     }
     private static bool CheckArrivalTime(DateTime arrivalDateTime,DateTime departureDateTime)
     {
@@ -306,5 +306,70 @@ public class Flight: IHasName
         {
             Console.WriteLine("{0} - {1} - {2}",flight.Id,flight.Name,flight.Airplane.Name);
         }
+    }
+
+    public static void FlightEdit()
+    {
+        Console.Clear();
+        AllAvailibleFlights();
+        var returnedFlight=SearchById();
+
+        returnedFlight?.FoundFlightEdit();
+    }
+
+    private void FoundFlightEdit()
+    {
+        var oldDepDateTime = this.DepartureDate;
+        var oldArrDateTime = this.ArrivalDate;
+        var newDepDateTime=DepDateTimeEdit(oldDepDateTime);
+        var newArrDateTime=ArrDateTimeEdit(newDepDateTime,oldArrDateTime);
+
+        if (oldDepDateTime == newDepDateTime && oldArrDateTime == newArrDateTime)
+        {
+            Console.WriteLine("Ništa nisi promijenio.\n");
+            return;
+        }
+
+        if (!Helper.ConfirmationMessage($"izmijeni let: {this.Id} - {this.Name} - {this.Airplane.Name}"))
+        {
+            Console.WriteLine("\nOdustao si od izmjene.\n");
+            return;
+        }
+
+        Console.WriteLine($"\nUspješna izmjena leta: {this.Id} - {this.Name} - {this.Airplane.Name}\n");
+        this.ArrivalDate = newArrDateTime;
+        this.DepartureDate = newDepDateTime;
+        this.FlightTime = (this.ArrivalDate - this.DepartureDate).Duration();
+
+
+    }
+
+    private static DateTime DepDateTimeEdit(DateTime oldDepDateTime)
+    {
+        Helper.SleepAndClear();
+
+        Console.WriteLine($"\nPromjena polaska leta .Trenutni polazak:{oldDepDateTime:yyyy-MM-dd HH:mm} \n");
+        return !Helper.ConfirmationMessage($"promijeniti datum i vrijeme polaska leta.") 
+            ? oldDepDateTime : DepartureDateInput();
+    }
+
+    private static DateTime ArrDateTimeEdit(DateTime depDateTime,DateTime oldArrDateTime)
+    {
+        Helper.SleepAndClear();
+        
+        Console.WriteLine($"\nPromjena dolaska leta.\nTrenutni polazak: {depDateTime:yyyy-MM-dd HH:mm}\nTrenutni dolazak: {oldArrDateTime:yyyy-MM-dd HH:mm}");
+        if (!CheckArrivalTime(oldArrDateTime, depDateTime))
+        {
+            Console.WriteLine("\nPromijenio si datum i vrijeme polaska leta i sada vrijeme dolaska više nije vremenski ispred polaska.");
+            return ArrivalDateInput(depDateTime);
+        }
+        if (!CheckFlightDuration(oldArrDateTime, depDateTime))
+        {
+            Console.WriteLine("\nPromijenio si datum i vrijeme polaska leta i sada let traje duže od 24 sata.\n");
+            return ArrivalDateInput(depDateTime);
+        }
+        
+        return !Helper.ConfirmationMessage("promijeniti datum i vrijeme dolazka leta.") 
+            ? oldArrDateTime : ArrivalDateInput(depDateTime);
     }
 }

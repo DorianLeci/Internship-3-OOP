@@ -212,6 +212,8 @@ class Program
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Prikaz svih letova\n");
             Console.WriteLine("2 - Dodavanje leta\n");
+            Console.WriteLine("3 - Pretraživanje letova\n");
+            Console.WriteLine("4 - Uređivanje leta\n");
             Console.WriteLine("0 - Povratak na glavni izbornik.");
             Console.WriteLine("----------------------\n");
             Console.Write("Unos: ");
@@ -234,10 +236,15 @@ class Program
                         Helper.WaitingUser();
                         break;
                     case '3':
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje novog leta.\n");
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje leta.\n");
                         Flight.FlightSearch();
                         Helper.WaitingUser();
-                        break;                        
+                        break;       
+                    case '4':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Uređivanje leta.\n");
+                        Flight.FlightEdit();
+                        Helper.WaitingUser();
+                        break;         
                     default:
                         Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
                         break;

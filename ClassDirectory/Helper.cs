@@ -12,7 +12,7 @@ public class Helper
 
     public static void WaitingUser()
     {
-        Console.WriteLine("Čeka se any key korisnika....");
+        Console.WriteLine("\nČeka se any key korisnika....");
         Console.ReadKey();
     }
     public static string RemoveWhiteSpace(string inputString)
@@ -119,6 +119,11 @@ public class Helper
         Thread.Sleep(1000);
     }
 
+    public static void SleepAndClear()
+    {
+        Thread.Sleep(500);
+        Console.Clear();
+    }
     public static bool IsIdValid(out int inputId)
     {
         return int.TryParse(Console.ReadLine()?.Trim(), out inputId);
