@@ -87,7 +87,8 @@ public class Seed
         member3.AddToList();
         member4.AddToList();
         
-        Crew.AddCrewMembers("Crew 1", [member1, member2, member3, member4]);
+        var newCrew=new Crew("Crew 1", [member1, member2, member3, member4]);
+        newCrew.AddToCrewList();
 
         var newPilot1 = new StaffMember("Dorian", "Leci", 2003, 'M', StaffMember.MemberTypeEnum.Pilot);
         var newPilot2=new StaffMember("Nikola", "Filipović", 2003, 'M', StaffMember.MemberTypeEnum.Pilot);

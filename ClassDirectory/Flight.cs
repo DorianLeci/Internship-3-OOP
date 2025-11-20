@@ -44,6 +44,7 @@ public class Flight: IHasName
         var arrivalDate = ArrivalDateInput(departureDate);
         var flightTime = (arrivalDate - departureDate).Duration();
         var airplane = ChooseAirplane();
+        var Crew = AddCrew();
         airplane.FlightCount++;
 
         if (!Helper.ConfirmationMessage("dodati novi let"))
@@ -380,5 +381,10 @@ public class Flight: IHasName
     {
         var foundFlights = _flightList.FindAll(flight => flight.Airplane.Id == planeId);
         return string.Join(", ",foundFlights.Select(flight=>flight.Id + " - " + flight.Name));
+    }
+
+    private static Crew? AddCrew()
+    {
+        return null;
     }
 }

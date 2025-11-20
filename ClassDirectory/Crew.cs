@@ -4,8 +4,26 @@ using CrewDict=Dictionary<string, List<StaffMember>>;
 
 public class Crew
 {
-    private static CrewDict _crews = new CrewDict();
+    private int _id;
+    private string _crewName;
+    private List<StaffMember> _crewMemberList;
+    private static List<Crew> _crewList = [];
+    private DateTime CreationTime { get; }
+    private DateTime UpdateTime { get; }
 
+    public Crew(string crewName,List<StaffMember> crewMemberList)
+    {
+        this._id = Helper.IdGenerator();
+        this._crewName = crewName;
+        this._crewMemberList = crewMemberList;
+        this.CreationTime=DateTime.Now;
+        this.UpdateTime=DateTime.Now;
+    }
+
+    public void AddToCrewList()
+    {
+        _crewList.Add(this);
+    }
     public static void CreateNewCrew()
     {
         Helper.SleepAndClear();
@@ -30,69 +48,63 @@ public class Crew
         }
         
         var crewName = Helper.NameSurnameInput("ime posade");
-        _crews[crewName] = [];
         
         var pilot = StaffMember.ChooseMember(StaffMember.MemberTypeEnum.Pilot);
-        _crews[crewName].Add(pilot);
         
         var copilot= StaffMember.ChooseMember(StaffMember.MemberTypeEnum.Copilot);
-        _crews[crewName].Add(copilot);
         
-        AddFlightAttendant(crewName);
+        var flightAttendant1=AddFlightAttendant(crewName);
+        var flightAttendant2=AddFlightAttendant(crewName);
 
         if (!Helper.ConfirmationMessage("unijeti novu posadu"))
         {
             Console.WriteLine("\nOdustao si od unosa nove posade.\n");
-            _crews.Remove(crewName);            
+            return;
         }
 
-        Console.WriteLine($"\nUspješan unos nove posade u trenutku: {copilot.CreationTime}\n");
-        SingleCrewOutput(new KeyValuePair<string, List<StaffMember>>(crewName,_crews[crewName]));
+        var newCrew = new Crew(crewName, [pilot, copilot, flightAttendant1, flightAttendant2]);
+        newCrew.AddToCrewList();
+        
+        Console.WriteLine($"\nUspješan unos nove posade u trenutku: {newCrew.CreationTime}\n");
+        SingleCrewOutput(newCrew);
         
 
 
 
     }
 
-    private static void AddFlightAttendant(string crewName)
+    private static StaffMember AddFlightAttendant(string crewName)
     {
-        for (int i = 0; i < 2; i++)
-        {
-            var gender = Helper.GenderInput();
-            var argument=(gender=='M') ? StaffMember.MemberTypeEnum.Steward : StaffMember.MemberTypeEnum.Stewardess;
-            var flightAttendant=StaffMember.ChooseMember(argument);
-            _crews[crewName].Add(flightAttendant);
-        }
-    }
-    public static void AddCrewMembers(string crewName,List<StaffMember> memberList)
-    {
-        _crews.Add(crewName, memberList);
-    }
+        var gender = Helper.GenderInput();
+        var argument=(gender=='M') ? StaffMember.MemberTypeEnum.Steward : StaffMember.MemberTypeEnum.Stewardess;
+        var flightAttendant=StaffMember.ChooseMember(argument);
 
+        return flightAttendant;
+    }
+    
     public static bool IsMemberInAnyCrew(int memberId)
     {
-        return _crews.Any(crew =>StaffMember.MemberExistenceCheck(memberId,crew.Value));
+        return _crewList.Any(crew =>StaffMember.MemberExistenceCheck(memberId,crew._crewMemberList));
     }
 
     public static void AllCrewsOutput()
     {
         Helper.SleepAndClear();
         Console.WriteLine("\nPrikaz svih posada.\n");
-        foreach (var crew in _crews)
+        foreach (var crew in _crewList)
             SingleCrewOutput(crew);
 
     }
-
-    private static void SingleCrewOutput(KeyValuePair<string, List<StaffMember>> crew)
+    
+    private static void SingleCrewOutput(Crew crew)
     {
-        var enumerable = crew.Value.Select(member=>member.StaffMemberStringReduced());
+        var enumerable = crew._crewMemberList.Select(member=>member.StaffMemberStringReduced());
         var joinString=string.Join(", ", enumerable);
-        Console.WriteLine($"{crew.Key} - [{joinString}]");
+        Console.WriteLine($"{crew._id} - {crew._crewName} - [{joinString}]");
 
         Console.WriteLine("\nPrikaz liste članova\n");
-        StaffMember.MembersListOutput(crew.Value);
+        StaffMember.MembersListOutput(crew._crewMemberList);
     }
-
-
+    
     
 }
