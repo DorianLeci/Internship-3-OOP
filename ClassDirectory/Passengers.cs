@@ -15,22 +15,32 @@ public class Passenger:Person
     }
     public static void PassengerRegistration(bool isPassengerNew)
     {
-
-        var name = Passenger.PassengerNameInput("ime");
-        var surname = Passenger.PassengerNameInput("prezime");
-        var email = Passenger.EmailRegisterInput();
-        var password = Passenger.PasswordRegisterInput();
+        Helper.SleepAndClear();
+        var name = PassengerNameInput("ime");
+        var surname = PassengerNameInput("prezime");
+        var email = EmailRegisterInput();
+        var password = PasswordRegisterInput();
         var birthYear = Helper.YearInput("rođenja");
         var gender = Helper.GenderInput();
         
-        if (Helper.ConfirmationMessage("dodati putnika(izvršiti registraciju"))
+        if (!Helper.ConfirmationMessage("dodati putnika(izvršiti registraciju"))
         {
-            var registeredPassenger=new Passenger( name,surname, email,birthYear,gender, password);
-            Console.WriteLine("Uspješna registracija");
+            Console.WriteLine("\nOdustao si od unosa novog putnika.\n");
+            return;
         }      
+        var registeredPassenger=new Passenger( name,surname, email,birthYear,gender, password);
+        Console.WriteLine("\nUspješna registracija\n");
+        registeredPassenger.PassengerInfo();
+        Console.WriteLine();
+    }
+
+    private void PassengerInfo()
+    {
+        Console.WriteLine($"{this.Name} -  {this.Surname} - {this.Email} - {this.BirthYear} - {this.Gender} - {this._password}");
     }
     public static void PassengerLogin(bool isPassengerNew)
     {
+        Helper.SleepAndClear();
         var email = Passenger.EmailLoginInput();
         if (email == "")
         {
@@ -44,17 +54,21 @@ public class Passenger:Person
     }
     public static string PassengerNameInput(string message)
     {
+        Helper.SleepAndClear();
+        Console.WriteLine("\nUnos: {0}na",message);
         while (true)
         {
             Console.Write("\nUnesi {0}: ",message);
             var inputPassenger = Console.ReadLine()!.ToLower();
             var removed=Helper.RemoveWhiteSpace(inputPassenger);
-            if (ValidatePassengerName(removed))
+            if (!ValidatePassengerName(removed))
             {
-                var formattedInput = Helper.ReturnFormattedInput(inputPassenger);
-                return formattedInput;
+                Console.WriteLine("\nPogrešan unos\n");
+                continue;
             }
-            else Console.WriteLine("Pogrešan unos.");
+            var formattedInput = Helper.ReturnFormattedInput(inputPassenger);
+            return formattedInput;
+
         }
 
     }
@@ -62,43 +76,66 @@ public class Passenger:Person
     {
         return (!string.IsNullOrEmpty(inputPassenger) && inputPassenger.All(ch => char.IsLetter(ch)));
     }
-    public static string EmailRegisterInput()
+    private static string EmailRegisterInput()
     {
+        Helper.SleepAndClear();
+        Console.WriteLine("\nUnos emaila");
         while(true)
         {   
-            Console.WriteLine("\nUnesi email.");
+            Console.Write("\nUnesi email: ");
             var inputEmail = Console.ReadLine()!;
             inputEmail=Helper.RemoveWhiteSpace(inputEmail);
+
+            if (!Helper.EmailCheck(inputEmail))
+            {
+                Console.WriteLine("Pogrešan format unosa.\n");
+                continue;
+            }
             
-            if (Helper.EmailCheck(inputEmail) && IsEmailUnique(inputEmail))
-                return inputEmail;
+            if (!IsEmailUnique(inputEmail))
+            {
+                Console.WriteLine("\nEmail već postoji u sustavu.Mora biti jedinstven.\n");
+                continue;
+            }
+            return inputEmail;
             
-            else if(!IsEmailUnique(inputEmail))
-                Console.WriteLine("Osoba s ovim emailom već postoji.Unesi drugi email.");
-            
-            else Console.WriteLine("\nPogrešan unos emaila.Unesi ponovno.");
         }        
     }
-    public static string EmailLoginInput()
+    private static string EmailLoginInput()
     {
+        Helper.SleepAndClear();
+        Console.WriteLine("\nUnos emaila.");
         var counter = 5;
         while(true)
         {
-            if (counter > 0 && counter<5)
-                Console.WriteLine("Ostalo još: {0} pokušaja",counter);
-            else if (counter == 0)
-                return "";
-            Console.WriteLine("\nUnesi email.");
-            var inputEmail = Console.ReadLine()!;
+            switch (counter)
+            {
+                case 0:
+                    return "";
+                
+                case > 0 and < 5:
+                    Console.WriteLine("Ostalo još: {0} pokušaja",counter);
+                    break;
+            }
+            Console.Write("\nUnesi email: ");
+            var inputEmail = Console.ReadLine()!.Trim();
             inputEmail=Helper.RemoveWhiteSpace(inputEmail);
-            
-            if (Helper.EmailCheck(inputEmail) && !IsEmailUnique(inputEmail))
-                return inputEmail;
-            else if(Helper.EmailCheck(inputEmail) && IsEmailUnique(inputEmail))
-                Console.WriteLine("\nNe postoji taj mail u sustavu.");
-            else Console.WriteLine("\nPogrešan unos emaila.Unesi ponovno.");
 
-            counter--;
+            if (!Helper.EmailCheck(inputEmail))
+            {
+                Console.WriteLine("\nPogrešan format unosa.\n");
+                counter--;
+                continue;
+            }
+
+            if (IsEmailUnique(inputEmail))
+            {
+                Console.WriteLine("\nNe postoji takav mail u sustavu.\n");
+                counter--;
+                continue;
+            }
+            return inputEmail;
+            
         }        
     }   
     private static bool IsEmailUnique(string inputEmail)
@@ -115,7 +152,7 @@ public class Passenger:Person
     {
         return _passengerList.Any(passenger => passenger._password == inputPassword && passenger.Email == inputEmail);
     }
-    public static string PasswordRegisterInput()
+    private static string PasswordRegisterInput()
     {
         while(true)
         {
@@ -128,27 +165,31 @@ public class Passenger:Person
         }           
     }
 
-    public static string PasswordLoginInput(string inputEmail)
+    private static string PasswordLoginInput(string inputEmail)
     {
         var counter = 5;
         while (true)
         {
-            if (counter > 0 && counter<5)
-                Console.WriteLine("Ostalo još: {0} pokušaja",counter);
-            else if (counter == 0)
-                return "";
+            switch (counter)
+            {
+                case > 0 and < 5:
+                    Console.WriteLine("Ostalo još: {0} pokušaja",counter);
+                    break;
+                case 0:
+                    return "";
+            }
             Console.WriteLine("Unesi lozinku.");
 
             
-            var inputPassword = Console.ReadLine()!;
-            if (Passenger.DoPasswordsMatch(inputPassword, inputEmail))
+            var inputPassword = Console.ReadLine()!.Trim();
+            if (!Passenger.DoPasswordsMatch(inputPassword, inputEmail))
             {
-                Console.WriteLine("Uspješna prijava.\n");
-                return inputPassword;
+                Console.WriteLine("\nLozinke se ne podudaraju.\n");
+                counter--;
+                continue;
             }
-            else Console.WriteLine("Lozinke se ne poduduraju.\n");
-
-            counter--;
+            Console.WriteLine("\nUspješna prijava.\n");
+            return inputPassword;
         }        
     }
         
@@ -158,8 +199,8 @@ public class Passenger:Person
         if (string.IsNullOrEmpty(inputPassword))
             return false;
         
-        bool isSpecialChar = inputPassword.Any(ch => !char.IsLetterOrDigit(ch));
-        bool isUpperChar = inputPassword.Any(ch => char.IsUpper(ch));
+        var isSpecialChar = inputPassword.Any(ch => !char.IsLetterOrDigit(ch));
+        var isUpperChar = inputPassword.Any(ch => char.IsUpper(ch));
         
         return  (isSpecialChar && isUpperChar && inputPassword.Length>=8);
     }

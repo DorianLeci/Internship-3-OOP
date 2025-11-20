@@ -27,13 +27,20 @@ public class StaffMember:Person
         var gender = Helper.GenderInput();
         var type=ChooseType();
         
-        if (Helper.ConfirmationMessage("dodati putnika(izvršiti registraciju"))
+        if (!Helper.ConfirmationMessage("dodati člana osoblja"))
         {
-            var registeredPassenger=new StaffMember( name,surname,birthYear,gender,type);
-            Console.WriteLine("Uspješna registracija");
+            Console.WriteLine("\nOdustao si od dodvanja novog člana osoblja.\n");
+            return;
         }     
+        var registeredStaffMember=new StaffMember( name,surname,birthYear,gender,type);
+        Console.WriteLine("\nUspješna registracija");
+        registeredStaffMember.StaffMemberOutput();
     }
-    
+
+    private void StaffMemberOutput()
+    {
+        Console.WriteLine($"{this.Name} - {this.Surname} - {this.BirthYear} - {this.Gender} - {this.StaffMemberType}");
+    }
 
     private static MemberTypeEnum ChooseType()
     {

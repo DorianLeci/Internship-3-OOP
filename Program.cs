@@ -86,7 +86,7 @@ class Program
                         }
                         else
                         {
-                            Helper.MessagePrintAndSleep("Uspješan odabir.Prijava putnika\n");
+                            Helper.MessagePrintAndSleep("\nUspješan odabir.Prijava putnika\n");
                             Passenger.PassengerLogin(false);                           
                         }
 

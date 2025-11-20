@@ -47,6 +47,8 @@ public class Helper
 
     public static int YearInput(string message)
     {
+        SleepAndClear();
+        Console.WriteLine("\nUnos godine.");
         while(true)
         {
             Console.Write("\nUnesi godinu {0}.Osoba mora biti stara barem 18 godina i imati datum rođenja poslije 1950 godine: ",message);
@@ -84,6 +86,8 @@ public class Helper
 
     public static char GenderInput()
     {
+        SleepAndClear();
+        Console.WriteLine("\nUnos spola.");
         while(true)
         {
             Console.Write("\nUnesi spol.(M,F) ili (m,f): ");
@@ -142,7 +146,7 @@ public class Helper
 
     public static void SleepAndClear()
     {
-        Thread.Sleep(500);
+        Thread.Sleep(200);
         Console.Clear();
     }
     public static bool IsIntegerValid(out int inputId)
