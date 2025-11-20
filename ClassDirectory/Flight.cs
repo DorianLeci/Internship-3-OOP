@@ -255,7 +255,7 @@ public class Flight: IHasName
     private static Flight? SearchById()
     {
         Console.Clear();
-        AllAvailibleFlights();
+        AllAvailableFlights();
         do
         {
             Console.Write("\nUnesi id: ");
@@ -281,7 +281,7 @@ public class Flight: IHasName
     private static Flight? SearchByName()
     {
         Console.Clear();
-        AllAvailibleFlights();
+        AllAvailableFlights();
         do
         {
             var searchIndex=Helper.FormatAndSearchByName(_flightList);
@@ -297,7 +297,7 @@ public class Flight: IHasName
 
         return null;
     }
-    private static void AllAvailibleFlights()
+    private static void AllAvailableFlights()
     {
         Console.WriteLine("Ispis svih dostupnih letova");
         foreach (var flight in _flightList)
@@ -309,7 +309,7 @@ public class Flight: IHasName
     public static void FlightEdit()
     {
         Console.Clear();
-        AllAvailibleFlights();
+        AllAvailableFlights();
         var returnedFlight=SearchById();
 
         returnedFlight?.FoundFlightEdit();

@@ -1,3 +1,6 @@
+
+using System.Globalization;
+
 namespace Internship_3_OOP.ClassDirectory;
 
 public class StaffMember:Person
@@ -10,8 +13,15 @@ public class StaffMember:Person
         Steward
     }
     public MemberTypeEnum StaffMemberType;
-    
-    private static Dictionary<MemberTypeEnum,StaffMember> _crewMembers=new Dictionary<MemberTypeEnum,StaffMember>();
+
+    private static Dictionary<MemberTypeEnum, List<StaffMember>> _staffMembers =
+        new()
+        {
+            { MemberTypeEnum.Pilot, [] },
+            { MemberTypeEnum.Copilot, [] },
+            { MemberTypeEnum.Steward, [] },
+            { MemberTypeEnum.Stewardess, [] }
+        };
     public StaffMember(string name, string surname,int birthYear, char gender,
         MemberTypeEnum staffMemberType) :
         base(name, surname,birthYear, gender)
@@ -19,35 +29,46 @@ public class StaffMember:Person
         this.StaffMemberType = staffMemberType;
     }
 
-    public static void AddStaffMember()
+    public void AddToList()
     {
-        var name = Passenger.PassengerNameInput("ime");
-        var surname = Passenger.PassengerNameInput("prezime");
+        _staffMembers[this.StaffMemberType].Add(this);
+        Console.WriteLine("Added : {0}",_staffMembers[this.StaffMemberType].Last());
+    }
+    public static StaffMember? AddStaffMember(MemberTypeEnum? defaultMemberType=null)
+    {
+        var name = Helper.NameSurnameInput("ime");
+        var surname = Helper.NameSurnameInput("prezime");
         var birthYear = Helper.YearInput("rođenja");
         var gender = Helper.GenderInput();
-        var type=ChooseType();
+        var type=defaultMemberType ?? ChooseType();
         
         if (!Helper.ConfirmationMessage("dodati člana osoblja"))
         {
             Console.WriteLine("\nOdustao si od dodvanja novog člana osoblja.\n");
-            return;
+            return null;
         }     
         var registeredStaffMember=new StaffMember( name,surname,birthYear,gender,type);
-        Console.WriteLine("\nUspješna registracija");
+        registeredStaffMember.AddToList();
+        
+        Console.WriteLine($"\nUspješno dodavanje novog člana osoblja u trenutku: {registeredStaffMember.CreationTime:yyyy-MM-dd HH:mm}\n");
         registeredStaffMember.StaffMemberOutput();
+
+        return registeredStaffMember;
     }
 
     private void StaffMemberOutput()
     {
-        Console.WriteLine($"{this.Name} - {this.Surname} - {this.BirthYear} - {this.Gender} - {this.StaffMemberType}");
+        Console.WriteLine($"{this.Id} - {this.Name} - {this.Surname} - {this.BirthYear} - {this.Gender} - {this.StaffMemberType}");
     }
 
     private static MemberTypeEnum ChooseType()
     {
-        AvailibleTypes();
+        Helper.SleepAndClear();
+        Console.WriteLine("\nUnos tipa člana osoblja.");
+        AvailableTypes();
         while (true)
         {
-            Console.Write("Unesi tip člana osoblja (broj): ");
+            Console.Write("\nUnesi tip člana osoblja (broj): ");
             if (!IsTypeValid(out var type))
             {
                 Console.WriteLine("Pogrešan format unosa.\n");
@@ -65,7 +86,7 @@ public class StaffMember:Person
         }
     }
 
-    private static void AvailibleTypes()
+    private static void AvailableTypes()
     {
         Console.WriteLine("\nDostupni tipovi za člana osoblja.\n");
         var i = 0;
@@ -80,6 +101,62 @@ public class StaffMember:Person
     {
         var input = Console.ReadKey().KeyChar;
         return Enum.TryParse(input.ToString(),true, out type);
+    }
+
+    public static StaffMember ChooseMember(MemberTypeEnum staffMemberType)
+    {
+        Helper.SleepAndClear();
+        Console.WriteLine($"\nOdabir osobe tipa : {staffMemberType}.\n");
+        
+        var list=ListOfAllAvailableMembers(staffMemberType);
+        AvailableMembersListOutput(list,staffMemberType);
+        
+        while (true)
+        {
+            Console.Write("\nUnesi id osobe koju želiš dodati u posadu: ");
+            if (!Helper.IsIntegerValid(out var inputId))
+            {
+                Console.WriteLine("\nPogrešan format unosa.\n");
+                continue;
+            }
+            
+            if (!MemberExistenceCheck(inputId, list))
+            {
+                Console.WriteLine($"\nNe postoji dostupna osoba tipa {staffMemberType} s unesenim id-om.\n");
+                continue;
+            }
+
+            return list.Find(member=>member.Id==inputId)!;
+        }
+
+    }
+
+    public static bool MemberExistenceCheck(int id,List<StaffMember> list)
+    {
+        return list.Any(member=>member.Id==id);
+    }
+    
+    public static List<StaffMember> ListOfAllAvailableMembers(MemberTypeEnum type)
+    {
+        var list = new List<StaffMember>();
+        foreach (var member in _staffMembers[type])
+        {
+            if (Crew.IsMemberInAnyCrew(member.Id)) continue;
+            list.Add(member);
+        }
+        
+        return list;
+    }
+
+    private static void AvailableMembersListOutput(List<StaffMember> list,MemberTypeEnum type)
+    {
+        Console.WriteLine($"\nPrikaz svih dostupnih osoba tipa {type} (onih koji nisu članovi niti jedne posade) : \n");
+        Console.WriteLine("\n----------");
+        foreach (var member in list)
+        {
+            member.StaffMemberOutput();
+        }
+        Console.WriteLine("---------------\n");
     }
 
 }

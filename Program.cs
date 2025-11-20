@@ -233,6 +233,7 @@ class Program
         {
             Console.Clear();
             Console.WriteLine("\n----------------------");
+            Console.WriteLine("2 - Dodavanje nove posade\n");            
             Console.WriteLine("3 - Dodavanje novog člana osoblja\n");
             Console.WriteLine("----------------------\n");
             Console.Write("Unos: ");
@@ -250,8 +251,8 @@ class Program
                         Helper.WaitingUser();
                         break;
                     case '2':
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.Dodavanje novog leta.\n");
-                        Flight.AddFlight();
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Dodavanje novog posade.\n");
+                        Crew.CreateNewCrew();
                         Helper.WaitingUser();
                         break;
                     case '3':

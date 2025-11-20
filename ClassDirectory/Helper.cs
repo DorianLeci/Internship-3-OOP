@@ -15,6 +15,30 @@ public class Helper
         Console.WriteLine("\nČeka se any key korisnika....");
         Console.ReadKey();
     }
+    public static string NameSurnameInput(string message)
+    {
+        Helper.SleepAndClear();
+        Console.WriteLine("\nUnos podatka: {0}",message);
+        while (true)
+        {
+            Console.Write("\nUnesi {0}: ",message);
+            var inputPassenger = Console.ReadLine()!.ToLower();
+            var removed=Helper.RemoveWhiteSpace(inputPassenger);
+            if (!ValidateNameSurname(removed))
+            {
+                Console.WriteLine("\nPogrešan unos\n");
+                continue;
+            }
+            var formattedInput = Helper.ReturnFormattedInput(inputPassenger);
+            return formattedInput;
+
+        }
+
+    }
+    private static bool ValidateNameSurname(string inputPassenger)
+    {
+        return (!string.IsNullOrEmpty(inputPassenger) && inputPassenger.All(ch => char.IsLetter(ch)));
+    }
     public static string RemoveWhiteSpace(string inputString)
     {
         return new string(inputString.Where(ch => !char.IsWhiteSpace(ch)).ToArray());
@@ -84,10 +108,10 @@ public class Helper
         return inputYear>1950;
     }
 
-    public static char GenderInput()
+    public static char GenderInput(string message="")
     {
         SleepAndClear();
-        Console.WriteLine("\nUnos spola.");
+        Console.WriteLine($"\nUnos spola {message}");
         while(true)
         {
             Console.Write("\nUnesi spol.(M,F) ili (m,f): ");
@@ -146,7 +170,7 @@ public class Helper
 
     public static void SleepAndClear()
     {
-        Thread.Sleep(200);
+        Thread.Sleep(400);
         Console.Clear();
     }
     public static bool IsIntegerValid(out int inputId)

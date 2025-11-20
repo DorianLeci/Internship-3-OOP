@@ -12,6 +12,7 @@ public class Seed
         
         AirplaneSeed();
         FlightSeed();
+        StaffMemberSeed();
     }
     private static void AirplaneSeed()
     {
@@ -67,10 +68,10 @@ public class Seed
         depDateTime=depDate.ToDateTime(depTime);
         arrDateTime = arrDate.ToDateTime(arrTime);
         flightTime = (depDateTime - arrDateTime).Duration();
-        _airplanes[2].FlightCount++;
         
         var flight2 = new Flight("CR800", depDateTime, arrDateTime, 150, flightTime, _airplanes[2]);
         flight2.AddToList();
+        _airplanes[2].FlightCount++;
         
     }
 
@@ -80,10 +81,23 @@ public class Seed
         var member2=new StaffMember("Petar", "Petrović", 1985, 'M', StaffMember.MemberTypeEnum.Copilot);
         var member3=new StaffMember("Ana", "Anić", 1985, 'F', StaffMember.MemberTypeEnum.Copilot);
         var member4=new StaffMember("Vesna", "Vesnić", 1993, 'F', StaffMember.MemberTypeEnum.Stewardess);
+        
+        member1.AddToList();
+        member2.AddToList();
+        member3.AddToList();
+        member4.AddToList();
+        
+        Crew.AddCrewMembers("Crew 1", [member1, member2, member3, member4]);
 
-        var crewName = "Crew 1";
-        Crew.CreateNewCrew(crewName);
-        Crew.AddCrewMember(crewName, [member1, member2, member3, member4]);
+        var newPilot = new StaffMember("Dorian", "Leci", 2003, 'M', StaffMember.MemberTypeEnum.Pilot);
+        var newCopilot1=new StaffMember("Vesna", "Leci", 1971, 'F', StaffMember.MemberTypeEnum.Copilot);
+        var newCopilot2=new StaffMember("Damir", "Leci", 1969, 'M', StaffMember.MemberTypeEnum.Copilot);
+        var newSteward=new StaffMember("Damir", "Leci", 1969, 'M', StaffMember.MemberTypeEnum.Steward);
+        
+        newPilot.AddToList();
+        newCopilot1.AddToList();
+        newCopilot2.AddToList();
+        newSteward.AddToList();
         
     }
 }

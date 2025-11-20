@@ -16,8 +16,8 @@ public class Passenger:Person
     public static void PassengerRegistration(bool isPassengerNew)
     {
         Helper.SleepAndClear();
-        var name = PassengerNameInput("ime");
-        var surname = PassengerNameInput("prezime");
+        var name = Helper.NameSurnameInput("ime");
+        var surname = Helper.NameSurnameInput("prezime");
         var email = EmailRegisterInput();
         var password = PasswordRegisterInput();
         var birthYear = Helper.YearInput("rođenja");
@@ -29,7 +29,7 @@ public class Passenger:Person
             return;
         }      
         var registeredPassenger=new Passenger( name,surname, email,birthYear,gender, password);
-        Console.WriteLine("\nUspješna registracija\n");
+        Console.WriteLine($"\nUspješna registracija u trenutku: {registeredPassenger.CreationTime:yyyy-MM-dd HH:mm}\n");
         registeredPassenger.PassengerInfo();
         Console.WriteLine();
     }
@@ -52,30 +52,7 @@ public class Passenger:Person
         if(password == "")
             Console.WriteLine("Neuspješna prijava pokušaj ponovno kasnije.\n");
     }
-    public static string PassengerNameInput(string message)
-    {
-        Helper.SleepAndClear();
-        Console.WriteLine("\nUnos: {0}na",message);
-        while (true)
-        {
-            Console.Write("\nUnesi {0}: ",message);
-            var inputPassenger = Console.ReadLine()!.ToLower();
-            var removed=Helper.RemoveWhiteSpace(inputPassenger);
-            if (!ValidatePassengerName(removed))
-            {
-                Console.WriteLine("\nPogrešan unos\n");
-                continue;
-            }
-            var formattedInput = Helper.ReturnFormattedInput(inputPassenger);
-            return formattedInput;
-
-        }
-
-    }
-    private static bool ValidatePassengerName(string inputPassenger)
-    {
-        return (!string.IsNullOrEmpty(inputPassenger) && inputPassenger.All(ch => char.IsLetter(ch)));
-    }
+    
     private static string EmailRegisterInput()
     {
         Helper.SleepAndClear();
@@ -173,11 +150,12 @@ public class Passenger:Person
             switch (counter)
             {
                 case > 0 and < 5:
-                    Console.WriteLine("Ostalo još: {0} pokušaja",counter);
+                    Console.WriteLine("Ostalo još: {0} pokušaja", counter);
                     break;
                 case 0:
                     return "";
             }
+
             Console.WriteLine("Unesi lozinku.");
 
             

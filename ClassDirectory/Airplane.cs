@@ -59,7 +59,7 @@ public class Airplane:IHasName
     {
         return (_airplaneList.Count > 0) ? _airplaneList.Last() : null;
     }
-    private static string AirplaneNameInput()
+    public static string AirplaneNameInput()
     {
         while (true)
         {
