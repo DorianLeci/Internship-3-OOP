@@ -233,8 +233,10 @@ class Program
         {
             Console.Clear();
             Console.WriteLine("\n----------------------");
+            Console.WriteLine("1 - Prikaz svih posada\n");     
             Console.WriteLine("2 - Dodavanje nove posade\n");            
             Console.WriteLine("3 - Dodavanje novog člana osoblja\n");
+            Console.WriteLine("0 - Povratak na glavni izbornik.");
             Console.WriteLine("----------------------\n");
             Console.Write("Unos: ");
             var input = Console.ReadKey().KeyChar;
@@ -246,8 +248,8 @@ class Program
                         MainMenu();
                         break;
                     case '1':
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova\n");
-                        Flight.FlightFormattedOutput();
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih posada\n");
+                        Crew.AllCrewsOutput();
                         Helper.WaitingUser();
                         break;
                     case '2':
@@ -260,11 +262,6 @@ class Program
                         StaffMember.AddStaffMember();
                         Helper.WaitingUser();
                         break;       
-                    case '4':
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.Uređivanje leta.\n");
-                        Flight.FlightEdit();
-                        Helper.WaitingUser();
-                        break;         
                     default:
                         Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
                         break;

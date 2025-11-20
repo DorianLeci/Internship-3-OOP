@@ -7,8 +7,8 @@ public abstract class Person
     protected string Surname { get; }
     protected int BirthYear { get; }
     protected char Gender { get; }
-    protected DateTime CreationTime { get; }
-    protected DateTime UpdateTime { get; }
+    public DateTime CreationTime { get; }
+    public DateTime UpdateTime { get; }
 
     protected Person(string name, string surname,int birthYear, char gender)
     {

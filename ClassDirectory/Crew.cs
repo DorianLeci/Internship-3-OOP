@@ -8,67 +8,62 @@ public class Crew
 
     public static void CreateNewCrew()
     {
+        Helper.SleepAndClear();
         if (StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Pilot).Count==0)
         {
             Console.WriteLine("\nNe postoji niti jedan doustpan pilot.Unesi nove pilote pa pokušaj ponovno kasnije.\n");
             return;
         }
-
-        var listOfCopilots = StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Copilot);
-        if (StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Copilot).Count==0 
-            || StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Copilot).Count==1)
+        
+        if (StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Copilot).Count==0)
         {
-            Console.WriteLine($"\nPostoji samo {listOfCopilots.Count} (treba biti barem dva) doustupan kopilot.Unesi nove kopilote pa pokušaj ponovno kasnije.\n");
+            Console.WriteLine("\nNe postoji niti jedan doustupan kopilot.Unesi nove kopilote pa pokušaj ponovno kasnije.\n");
+            return;
+        }
+
+        var stewardList = StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Steward);
+        var stewardessList = StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Stewardess);
+        if (stewardList.Count <2 || stewardessList.Count <2)
+        {
+            Console.WriteLine($"\nDodaj bar 2 stjuarda i bar 2 stjuardese.\nTrenutni broj dostupnih sjuarda: {stewardList.Count}.\nTrenutni broj dostupnih stjuardesa: {stewardessList.Count}.\n");
             return;
         }
         
-        
         var crewName = Helper.NameSurnameInput("ime posade");
-        
-        var gender=Helper.GenderInput("M ili F (M- za stjuarda,F- za stjuardesu)");
-        switch (gender)
-        {
-            case 'M':
-                if (StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Steward).Count==0)
-                {
-                    Console.WriteLine("\nNe postoji niti jedan dostupan stjuard.Unesi nove stjuarde pa pokušaj ponovno kasnije.\n");
-                    return;
-                }
-
-                break;
-            case 'F':
-                if (StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Stewardess).Count==0)
-                {
-                    Console.WriteLine("\nNe postoji niti jedna dostupna stjuardesa.Unesi nove stjuardese pa pokušaj ponovno kasnije.\n");
-                    return;
-                }
-                break;
-        }
-
-        
         _crews[crewName] = [];
-        
-        var argument = (gender == 'M') ? StaffMember.MemberTypeEnum.Steward : StaffMember.MemberTypeEnum.Stewardess;
-        var flightAttendant=StaffMember.ChooseMember(argument); 
-        _crews[crewName].Add(flightAttendant);
         
         var pilot = StaffMember.ChooseMember(StaffMember.MemberTypeEnum.Pilot);
         _crews[crewName].Add(pilot);
         
-        var copilot1= StaffMember.ChooseMember(StaffMember.MemberTypeEnum.Copilot);
-        _crews[crewName].Add(copilot1);
+        var copilot= StaffMember.ChooseMember(StaffMember.MemberTypeEnum.Copilot);
+        _crews[crewName].Add(copilot);
         
-        var copilot2 = StaffMember.ChooseMember(StaffMember.MemberTypeEnum.Copilot);
-        _crews[crewName].Add(copilot2);
+        AddFlightAttendant(crewName);
 
-        if (Helper.ConfirmationMessage("unijeti novu posadu")) return;
+        if (!Helper.ConfirmationMessage("unijeti novu posadu"))
+        {
+            Console.WriteLine("\nOdustao si od unosa nove posade.\n");
+            _crews.Remove(crewName);            
+        }
+
+        Console.WriteLine($"\nUspješan unos nove posade u trenutku: {copilot.CreationTime}\n");
+        SingleCrewOutput(new KeyValuePair<string, List<StaffMember>>(crewName,_crews[crewName]));
         
-        Console.WriteLine("\nOdustao si od unosa nove posade.\n");
-        _crews.Remove(crewName);
+
 
 
     }
-    
+
+    private static void AddFlightAttendant(string crewName)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            var gender = Helper.GenderInput();
+            var argument=(gender=='M') ? StaffMember.MemberTypeEnum.Steward : StaffMember.MemberTypeEnum.Stewardess;
+            var flightAttendant=StaffMember.ChooseMember(argument);
+            _crews[crewName].Add(flightAttendant);
+        }
+    }
     public static void AddCrewMembers(string crewName,List<StaffMember> memberList)
     {
         _crews.Add(crewName, memberList);
@@ -79,7 +74,24 @@ public class Crew
         return _crews.Any(crew =>StaffMember.MemberExistenceCheck(memberId,crew.Value));
     }
 
+    public static void AllCrewsOutput()
+    {
+        Helper.SleepAndClear();
+        Console.WriteLine("\nPrikaz svih posada.\n");
+        foreach (var crew in _crews)
+            SingleCrewOutput(crew);
 
+    }
+
+    private static void SingleCrewOutput(KeyValuePair<string, List<StaffMember>> crew)
+    {
+        var enumerable = crew.Value.Select(member=>member.StaffMemberStringReduced());
+        var joinString=string.Join(", ", enumerable);
+        Console.WriteLine($"{crew.Key} - [{joinString}]");
+
+        Console.WriteLine("\nPrikaz liste članova\n");
+        StaffMember.MembersListOutput(crew.Value);
+    }
 
 
     

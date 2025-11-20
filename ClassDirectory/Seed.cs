@@ -89,15 +89,29 @@ public class Seed
         
         Crew.AddCrewMembers("Crew 1", [member1, member2, member3, member4]);
 
-        var newPilot = new StaffMember("Dorian", "Leci", 2003, 'M', StaffMember.MemberTypeEnum.Pilot);
-        var newCopilot1=new StaffMember("Vesna", "Leci", 1971, 'F', StaffMember.MemberTypeEnum.Copilot);
-        var newCopilot2=new StaffMember("Damir", "Leci", 1969, 'M', StaffMember.MemberTypeEnum.Copilot);
-        var newSteward=new StaffMember("Damir", "Leci", 1969, 'M', StaffMember.MemberTypeEnum.Steward);
+        var newPilot1 = new StaffMember("Dorian", "Leci", 2003, 'M', StaffMember.MemberTypeEnum.Pilot);
+        var newPilot2=new StaffMember("Nikola", "Filipović", 2003, 'M', StaffMember.MemberTypeEnum.Pilot);
         
-        newPilot.AddToList();
+        var newCopilot2=new StaffMember("Zora", "Zorić", 1971, 'F', StaffMember.MemberTypeEnum.Copilot);
+        var newCopilot1=new StaffMember("Vesna", "Leci", 1971, 'F', StaffMember.MemberTypeEnum.Copilot);
+
+        
+        var newSteward1=new StaffMember("Damir", "Leci", 1969, 'M', StaffMember.MemberTypeEnum.Steward);
+        var newSteward2=new StaffMember("Dinko", "Dinković", 2004, 'M', StaffMember.MemberTypeEnum.Steward);
+        var newStewardess1=new StaffMember("Jana", "Janić", 1975, 'F', StaffMember.MemberTypeEnum.Stewardess);
+        var newStewardess2=new StaffMember("Marija", "Marić", 1980, 'F', StaffMember.MemberTypeEnum.Stewardess);
+        
+        newPilot1.AddToList();
+        newPilot2.AddToList();
+        
         newCopilot1.AddToList();
         newCopilot2.AddToList();
-        newSteward.AddToList();
+        
+        newSteward1.AddToList();
+        newSteward2.AddToList();
+        
+        newStewardess1.AddToList();
+        newStewardess2.AddToList();
         
     }
 }

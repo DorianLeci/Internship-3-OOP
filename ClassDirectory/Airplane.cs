@@ -156,12 +156,11 @@ public class Airplane:IHasName
     {
         Console.WriteLine("\n-----------");
         Console.WriteLine("{0} - {1} - {2} - {3}",this.Id,this.Name,this.ManufactureYear,this.FlightCount);
-        Console.Write("Kategorije: [");
-        foreach (var kvPair in this._categoriesDict)
-        {
-            Console.Write("{0} - {1}//",kvPair.Key,kvPair.Value);
-        }
-        Console.Write("]\n");
+        
+        var enumerable = this._categoriesDict.Select(kvPair => $"{kvPair.Key} - {kvPair.Value}");
+        var joinString=string.Join(", ", enumerable);
+
+        Console.WriteLine($"[{joinString}]");
         Console.WriteLine("-----------\n");
     }
     

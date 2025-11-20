@@ -32,16 +32,20 @@ public class StaffMember:Person
     public void AddToList()
     {
         _staffMembers[this.StaffMemberType].Add(this);
-        Console.WriteLine("Added : {0}",_staffMembers[this.StaffMemberType].Last());
     }
     public static StaffMember? AddStaffMember(MemberTypeEnum? defaultMemberType=null)
     {
         var name = Helper.NameSurnameInput("ime");
         var surname = Helper.NameSurnameInput("prezime");
         var birthYear = Helper.YearInput("rođenja");
-        var gender = Helper.GenderInput();
         var type=defaultMemberType ?? ChooseType();
-        
+        var gender = type switch
+        {
+            MemberTypeEnum.Steward => 'M',
+            MemberTypeEnum.Stewardess => 'F',
+            _ => Helper.GenderInput()
+        };
+
         if (!Helper.ConfirmationMessage("dodati člana osoblja"))
         {
             Console.WriteLine("\nOdustao si od dodvanja novog člana osoblja.\n");
@@ -59,6 +63,11 @@ public class StaffMember:Person
     private void StaffMemberOutput()
     {
         Console.WriteLine($"{this.Id} - {this.Name} - {this.Surname} - {this.BirthYear} - {this.Gender} - {this.StaffMemberType}");
+    }
+
+    public string StaffMemberStringReduced()
+    {
+        return string.Join(" - ", [this.Id, this.Name, this.Surname]);
     }
 
     private static MemberTypeEnum ChooseType()
@@ -151,11 +160,16 @@ public class StaffMember:Person
     private static void AvailableMembersListOutput(List<StaffMember> list,MemberTypeEnum type)
     {
         Console.WriteLine($"\nPrikaz svih dostupnih osoba tipa {type} (onih koji nisu članovi niti jedne posade) : \n");
+        MembersListOutput(list);
+    }
+
+    public static void MembersListOutput(List<StaffMember> list)
+    {
         Console.WriteLine("\n----------");
         foreach (var member in list)
         {
             member.StaffMemberOutput();
-        }
+        }       
         Console.WriteLine("---------------\n");
     }
 
