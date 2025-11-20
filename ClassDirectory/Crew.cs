@@ -4,8 +4,8 @@ using CrewDict=Dictionary<string, List<StaffMember>>;
 
 public class Crew
 {
-    private int _id;
-    private string _crewName;
+    public int Id { get; }
+    public string CrewName { get; }
     private List<StaffMember> _crewMemberList;
     private static List<Crew> _crewList = [];
     private DateTime CreationTime { get; }
@@ -13,8 +13,8 @@ public class Crew
 
     public Crew(string crewName,List<StaffMember> crewMemberList)
     {
-        this._id = Helper.IdGenerator();
-        this._crewName = crewName;
+        this.Id = Helper.IdGenerator();
+        this.CrewName = crewName;
         this._crewMemberList = crewMemberList;
         this.CreationTime=DateTime.Now;
         this.UpdateTime=DateTime.Now;
@@ -98,12 +98,30 @@ public class Crew
     
     private static void SingleCrewOutput(Crew crew)
     {
-        var enumerable = crew._crewMemberList.Select(member=>member.StaffMemberStringReduced());
-        var joinString=string.Join(", ", enumerable);
-        Console.WriteLine($"{crew._id} - {crew._crewName} - [{joinString}]");
-
+        crew.GeneralCrewInfo();
+        
         Console.WriteLine("\nPrikaz liste članova\n");
         StaffMember.MembersListOutput(crew._crewMemberList);
+    }
+
+    public void GeneralCrewInfo()
+    {
+        var enumerable = this._crewMemberList.Select(member=>member.StaffMemberStringReduced());
+        var joinString=string.Join(", ", enumerable);
+        Console.WriteLine($"{this.Id} - {this.CrewName} - [{joinString}]");        
+    }
+    public static List<Crew> FindAvailableCrews(DateTime depDateTime,DateTime arrDateTime,List<Flight>flightList)
+    {
+        var found = flightList.FindAll(flight =>FlightsOverlap(flight.DepartureDate,flight.ArrivalDate,depDateTime,arrDateTime)).Distinct().ToList();
+        var busyCrews=found.Select(flight => flight.FlightCrew).ToList();
+        var crewListFiltrated=_crewList.Where(crew=>!busyCrews.Contains(crew)).ToList();
+
+        return crewListFiltrated;
+    }
+
+    private static bool FlightsOverlap(DateTime start1,DateTime end1,DateTime start2,DateTime end2)
+    {
+        return start1 < end2 && start2 < end1;
     }
     
     
