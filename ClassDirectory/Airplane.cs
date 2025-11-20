@@ -91,13 +91,13 @@ public class Airplane:IHasName
             CategoryPrint();
             Console.Write("\nKategorija leta (unesi broj kategorije): ");
 
-            if (!CategoriesFormatCheck(out var inputCategory))
+            if (!Helper.EnumFormatCheck(out Categories inputCategory))
             {
                 Console.WriteLine("\nPogrešan format unosa.\n");
                 return;
             }
 
-            if (!IsDefinedInEnum(inputCategory))
+            if (!Helper.IsDefinedInEnum(inputCategory))
             {
                 Console.WriteLine("\nTa kategorija nije navedena.\n");
                 return;
@@ -126,16 +126,6 @@ public class Airplane:IHasName
         }
     }
 
-    private static bool CategoriesFormatCheck(out Categories inputCategory)
-    {
-        var input = Console.ReadKey().KeyChar;
-        return Enum.TryParse<Categories>(input.ToString(),true, out inputCategory);
-    }
-
-    private static bool IsDefinedInEnum(Categories inputCategory)
-    {
-        return Enum.IsDefined(typeof(Categories), inputCategory);
-    }
 
     private static bool IsCategoryAdded(Dictionary<Categories, int> categoriesDict,Categories inputCategory)
     {
@@ -246,7 +236,7 @@ public class Airplane:IHasName
         do
         {
             Console.Write("\nUnesi id: ");
-            if (!Helper.IsIdValid(out var inputId))
+            if (!Helper.IsIntegerValid(out var inputId))
             {
                 Console.WriteLine("Pogrešan format unosa.");
                 continue;               

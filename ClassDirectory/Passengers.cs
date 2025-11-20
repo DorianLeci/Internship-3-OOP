@@ -1,31 +1,46 @@
 namespace Internship_3_OOP.ClassDirectory;
 
-public class Passenger
+public class Passenger:Person
 {
-    public Guid Id { get; }
-    public string Name { get; }
-    public string Surname { get; }
     public string Email { get; }
-    private string _password;
-    public int BirthYear { get; }
-    public char Gender { get; }
-
-    public DateTime creationTime { get; }
-    public DateTime updateTime { get; }
-
+    private readonly string _password;
     private static List<Passenger> _passengerList = new List<Passenger>();
-    public Passenger(Guid id, string name, string surname, string email,string password,int birthYear,char gender)
+
+    public Passenger(string name, string surname, string email, int birthYear, char gender, string password) :
+        base(name, surname, birthYear, gender)
     {
-        this.Id = id;
-        this.Name = name;
-        this.Surname = surname;
         this.Email = email;
         this._password = password;
-        this.BirthYear = birthYear;
-        this.Gender = gender;
-        this.creationTime = DateTime.Now;
-        this.updateTime = DateTime.Now;
         _passengerList.Add(this);
+    }
+    public static void PassengerRegistration(bool isPassengerNew)
+    {
+
+        var name = Passenger.PassengerNameInput("ime");
+        var surname = Passenger.PassengerNameInput("prezime");
+        var email = Passenger.EmailRegisterInput();
+        var password = Passenger.PasswordRegisterInput();
+        var birthYear = Helper.YearInput("rođenja");
+        var gender = Helper.GenderInput();
+        
+        if (Helper.ConfirmationMessage("dodati putnika(izvršiti registraciju"))
+        {
+            var registeredPassenger=new Passenger( name,surname, email,birthYear,gender, password);
+            Console.WriteLine("Uspješna registracija");
+        }      
+    }
+    public static void PassengerLogin(bool isPassengerNew)
+    {
+        var email = Passenger.EmailLoginInput();
+        if (email == "")
+        {
+            Console.WriteLine("Neuspješna prijava.Pokušaj ponovno kasnije.\n");
+            return;
+        }
+
+        var password = Passenger.PasswordLoginInput(email);
+        if(password == "")
+            Console.WriteLine("Neuspješna prijava pokušaj ponovno kasnije.\n");
     }
     public static string PassengerNameInput(string message)
     {
@@ -43,7 +58,7 @@ public class Passenger
         }
 
     }
-    public static bool ValidatePassengerName(string inputPassenger)
+    private static bool ValidatePassengerName(string inputPassenger)
     {
         return (!string.IsNullOrEmpty(inputPassenger) && inputPassenger.All(ch => char.IsLetter(ch)));
     }

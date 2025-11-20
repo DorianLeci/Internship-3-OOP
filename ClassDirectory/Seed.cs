@@ -5,12 +5,10 @@ public class Seed
     private static List<Airplane> _airplanes = [];
     public static void DataSeed()
     {
-        var pass1 = new Passenger(Guid.NewGuid(), "Dorian", "Leci", "zandzartz@gmail.com", "FujF48Ym#",
-            2004, 'M');
-        var pass2 = new Passenger(Guid.NewGuid(), "Nikola", "Filipović", "nfilip5@net.hr", "1234567#A",
-            2004, 'M');
-        var pass3 = new Passenger(Guid.NewGuid(), "Marija", "Hanić", "marijah@gmail.com", "123AbcdE#",
-            2005, 'F');
+        var pass1 = new Passenger("Dorian", "Leci", "zandzartz@gmail.com", 2004,'M', "FujF48Ym#");
+        var pass2 = new Passenger("Nikola", "Filipović", "nfilip5@net.hr", 2004,'M', "1234567#A");
+        var pass3 = new Passenger("Marija", "Hanić", "marijah@gmail.com", 2005,
+            'F', "123AbcdE#");
         
         AirplaneSeed();
         FlightSeed();
@@ -74,6 +72,18 @@ public class Seed
         var flight2 = new Flight("CR800", depDateTime, arrDateTime, 150, flightTime, _airplanes[2]);
         flight2.AddToList();
         
-    }    
-    
+    }
+
+    private static void StaffMemberSeed()
+    {
+        var member1 = new StaffMember("Ante", "Antić",2004, 'M', StaffMember.MemberTypeEnum.Pilot);
+        var member2=new StaffMember("Petar", "Petrović", 1985, 'M', StaffMember.MemberTypeEnum.Copilot);
+        var member3=new StaffMember("Ana", "Anić", 1985, 'F', StaffMember.MemberTypeEnum.Copilot);
+        var member4=new StaffMember("Vesna", "Vesnić", 1993, 'F', StaffMember.MemberTypeEnum.Stewardess);
+
+        var crewName = "Crew 1";
+        Crew.CreateNewCrew(crewName);
+        Crew.AddCrewMember(crewName, [member1, member2, member3, member4]);
+        
+    }
 }

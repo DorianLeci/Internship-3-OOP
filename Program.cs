@@ -44,7 +44,11 @@ class Program
                 case '3':
                     Helper.MessagePrintAndSleep("\nUspješan odabir izbornika za avione.");
                     AirplaneMenu();
-                    break;                        
+                    break; 
+                case '4':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir izbornika za posade.");
+                    StaffMemberMenu();
+                    break;     
                 default:
                     Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno");
                     break;
@@ -72,7 +76,7 @@ class Program
                         break;
                     case '1':
                         Helper.MessagePrintAndSleep("\nUspješan odabir.Registracija putnika.\n");
-                        PassengerRegistration(true);
+                        Passenger.PassengerRegistration(true);
                         Helper.WaitingUser();
                         break;
                     case '2':
@@ -83,7 +87,7 @@ class Program
                         else
                         {
                             Helper.MessagePrintAndSleep("Uspješan odabir.Prijava putnika\n");
-                            PassengerLogin(false);                           
+                            Passenger.PassengerLogin(false);                           
                         }
 
                         Helper.WaitingUser();
@@ -94,36 +98,7 @@ class Program
                 }
         }
     }
-
-    static void PassengerRegistration(bool isPassengerNew)
-    {
-
-        var name = Passenger.PassengerNameInput("ime");
-        var surname = Passenger.PassengerNameInput("prezime");
-        var email = Passenger.EmailRegisterInput();
-        var password = Passenger.PasswordRegisterInput();
-        var birthDate = Helper.YearInput("rođenja");
-        var gender = Helper.GenderInput();
-        
-        if (Helper.ConfirmationMessage("dodati putnika(izvršiti registraciju"))
-        {
-            var registeredPassenger=new Passenger(Guid.NewGuid(), name,surname, email, password, birthDate, gender);
-            Console.WriteLine("Uspješna registracija");
-        }      
-    }
-    static void PassengerLogin(bool isPassengerNew)
-    {
-        var email = Passenger.EmailLoginInput();
-        if (email == "")
-        {
-            Console.WriteLine("Neuspješna prijava.Pokušaj ponovno kasnije.\n");
-            return;
-        }
-
-        var password = Passenger.PasswordLoginInput(email);
-        if(password == "")
-            Console.WriteLine("Neuspješna prijava pokušaj ponovno kasnije.\n");
-    }
+    
 
     public static void AirplaneMenu()
     {
@@ -250,6 +225,50 @@ class Program
                         break;
                 }
         }        
+    }
+
+    public static void StaffMemberMenu()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("\n----------------------");
+            Console.WriteLine("3 - Dodavanje novog člana osoblja\n");
+            Console.WriteLine("----------------------\n");
+            Console.Write("Unos: ");
+            var input = Console.ReadKey().KeyChar;
+                switch (input)
+                {
+                    case '0':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na glavni izbornik.\n");
+                        Console.WriteLine();
+                        MainMenu();
+                        break;
+                    case '1':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova\n");
+                        Flight.FlightFormattedOutput();
+                        Helper.WaitingUser();
+                        break;
+                    case '2':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Dodavanje novog leta.\n");
+                        Flight.AddFlight();
+                        Helper.WaitingUser();
+                        break;
+                    case '3':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Dodavanje novog člana osoblja.\n");
+                        StaffMember.AddStaffMember();
+                        Helper.WaitingUser();
+                        break;       
+                    case '4':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Uređivanje leta.\n");
+                        Flight.FlightEdit();
+                        Helper.WaitingUser();
+                        break;         
+                    default:
+                        Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
+                        break;
+                }
+        }                
     }
 }
     

@@ -259,7 +259,7 @@ public class Flight: IHasName
         do
         {
             Console.Write("\nUnesi id: ");
-            if (!Helper.IsIdValid(out var inputId))
+            if (!Helper.IsIntegerValid(out var inputId))
             {
                 Console.WriteLine("Pogrešan format unosa.");
                 continue;               

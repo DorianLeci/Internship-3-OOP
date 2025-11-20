@@ -6,8 +6,8 @@ public class Helper
     private static int _idCounter = 0;
     private enum GenderEnum
     {
-        Male='M',
-        Female='F'
+        M,
+        F
     }
 
     public static void WaitingUser()
@@ -49,12 +49,37 @@ public class Helper
     {
         while(true)
         {
-            Console.Write("\nUnesi godinu {0}.Ne smije biti novija od trenutačne niti starija od prve godine: ",message);
-            if (int.TryParse(Console.ReadLine()?.Trim(), out var date) && date<=DateTime.Today.Year && date>=DateTime.MinValue.Year)
-                return date;
-            else
-                Console.WriteLine("\nPogrešan unos godine.");
+            Console.Write("\nUnesi godinu {0}.Osoba mora biti stara barem 18 godina i imati datum rođenja poslije 1950 godine: ",message);
+            if (!IsIntegerValid(out var inputYear))
+            {
+                Console.WriteLine("\nPogrešan format unosa.\n");
+                continue;
+            }
+
+            if (!YearCheck(inputYear))
+            {
+                Console.WriteLine("\nOsoba je mlađa od 18 godina.\n");
+                continue;
+            }
+
+            if (!IsToOld(inputYear))
+            {
+                Console.WriteLine("\nOsoba je prestara.Unesi godinu rođenja poslije 1950 godine.\n");
+                continue;
+            }
+
+            return inputYear;
         }               
+    }
+
+    private static bool YearCheck(int inputYear)
+    {
+        return (DateTime.Now.Year-inputYear)>=18;
+    }
+
+    private static bool IsToOld(int inputYear)
+    {
+        return inputYear>1950;
     }
 
     public static char GenderInput()
@@ -62,24 +87,20 @@ public class Helper
         while(true)
         {
             Console.Write("\nUnesi spol.(M,F) ili (m,f): ");
-            if (char.TryParse(Console.ReadLine()?.ToUpper(),out var inputGender) && GenderCheck(inputGender))
-                return inputGender;
-            else
-                Console.WriteLine("\nPogrešan unos spola.");
+            if (!EnumFormatCheck(out GenderEnum inputGender))
+            {
+                Console.WriteLine("\nPogrešan format unosa.\n");
+                continue;
+            }
+
+            if (!IsDefinedInEnum(inputGender))
+            {
+                Console.WriteLine("\nSpol nije definiran.\n");
+                continue;
+            }
+
+            return inputGender.ToString()[0];
         }               
-    }
-
-    public static bool GenderCheck(char inputGender)
-    {
-        try
-        {
-            return Enum.IsDefined(typeof(GenderEnum), (int)inputGender);
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-
     }
     
     public static bool ConfirmationMessage(string messageType)
@@ -124,7 +145,7 @@ public class Helper
         Thread.Sleep(500);
         Console.Clear();
     }
-    public static bool IsIdValid(out int inputId)
+    public static bool IsIntegerValid(out int inputId)
     {
         return int.TryParse(Console.ReadLine()?.Trim(), out inputId);
     }
@@ -146,5 +167,14 @@ public class Helper
     public static bool ObjectExists<T>(string inputName,List<T> objectList) where T : IHasName
     {
         return (objectList.Count > 0) && objectList.Any(item => string.Equals(item.Name,inputName,StringComparison.OrdinalIgnoreCase));
+    }
+    public static bool IsDefinedInEnum<T>(T input) where T:Enum
+    {
+        return Enum.IsDefined(typeof(T), input);
+    }
+    public static bool EnumFormatCheck<T>(out T inputItem) where T:struct,Enum
+    {
+        var input = Console.ReadKey().KeyChar;
+        return Enum.TryParse(input.ToString(),true, out inputItem);
     }
 }
