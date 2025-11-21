@@ -400,11 +400,15 @@ public class
 
     public static void FlightEdit()
     {
-        Helper.SleepAndClear();
         AllAvailableFlights(false);
         var returnedFlight=SearchById(_flightList);
 
-        returnedFlight?.FoundFlightEdit();
+        if (returnedFlight == null)
+        {
+            Console.WriteLine("\nOdustao si od unosa id-a pa i od brisanja leta.\n");
+            return;
+        }
+        returnedFlight.FoundFlightEdit();
     }
 
     private void FoundFlightEdit()
@@ -428,8 +432,9 @@ public class
             Console.WriteLine("\nOdustao si od izmjene.\n");
             return;
         }
-
-        Console.WriteLine($"\nUspješna izmjena leta: [{this.Id}] - {this.Name} - {this.Airplane.Name}\n");
+        
+        this.UpdateTime=DateTime.Now;
+        Console.WriteLine($"\nUspješna izmjena leta {this.Id} - {this.Name} - {this.Airplane.Name} u trenutku {this.UpdateTime:yyyy-MM-dd HH:mm} \n");
 
         if (oldDepDateTime != newDepDateTime)
         {
@@ -556,5 +561,52 @@ public class
     private bool IsDefinedInFlightCategories(Categories category)
     {
         return _capacityCount.ContainsKey(category);
+    }
+
+    public static void FlightDelete()
+    {
+        var availableFlights = AvailableFlightsForDeletion(_flightList);
+        if (availableFlights.Count == 0)
+        {
+            Console.WriteLine("\nNe postoje dostupni letovi za brisanje. Da bi let mogao biti obrisan mora polaziti za više od 24h i" +
+                              " ako je broj putnika na tom letu manji od 50% ukupnog kapaciteta leta");
+            return;
+        }
+        var flightToDelete = SearchById(availableFlights);
+        if (flightToDelete == null)
+        {
+            Console.WriteLine("\nOdustao si od unosa id-a pa i od brisanja leta.\n");
+            return;
+        }
+
+        if (!Helper.ConfirmationMessage("obrisati let"))
+        {
+            Console.WriteLine("\nIpak si odustao od brisanja leta.\n");
+            return;
+        }
+        
+        _flightList.Remove(flightToDelete);
+        Passenger.RemoveFlightByReference(flightToDelete);
+
+        Console.WriteLine($"$\nUspješno brisanje leta {flightToDelete.Id} - {flightToDelete.Name} povezanog s avionom {flightToDelete.Airplane.Name} " +
+                          $"i posadom {flightToDelete.FlightCrew.Id} - {flightToDelete.FlightCrew.CrewName} u trenutku: {DateTime.Now:yyyy-MM:dd HH:mm} ");
+
+    }
+
+    private static List<Flight> AvailableFlightsForDeletion(List<Flight> flightList)
+    {
+        var availableFlightsByTime=Passenger.AvailableFlightsForCancelation(flightList);
+        
+        return  availableFlightsByTime.FindAll(flight=>flight.AllPassengersCount()<(flight.FlightCapacity()/2));
+    }
+
+    private int FlightCapacity()
+    {
+        return this.Airplane.GetCategoriesAndCapacity().Values.Sum();
+    }
+
+    private int AllPassengersCount()
+    {
+        return FlightCapacity()-this._capacityCount.Values.Sum();
     }
 }

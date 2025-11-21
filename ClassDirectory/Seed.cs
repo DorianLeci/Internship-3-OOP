@@ -50,7 +50,15 @@ public class Seed
         var airplane3 = new Airplane("Croatia 3",2004,catDict3);   
         airplane3.AddToList();
         
-        _airplanes.AddRange([airplane1, airplane2, airplane3]);
+        var catDict4 = new Dictionary<Categories, int>()
+        {
+            {Categories.Economy,1},
+            {Categories.Business,1},
+        };
+        var airplane4 = new Airplane("Croatia 4",2002,catDict4);   
+        airplane4.AddToList();
+        
+        _airplanes.AddRange([airplane1, airplane2, airplane3,airplane4]);
         
     }
     private static void FlightSeed()
@@ -107,6 +115,18 @@ public class Seed
         var flight4 = new Flight("CR802", depDateTime, arrDateTime, 150, flightTime, _airplanes[0],_crewMemberList[0]);
         flight4.AddToList();
         _airplanes[0].FlightCount++;
+        
+        depDate = new DateOnly(2025, 12, 26);
+        depTime = new TimeOnly(08,40);
+        arrDate = new DateOnly(2025, 12 ,26);
+        arrTime = new TimeOnly(14,45);
+        depDateTime=depDate.ToDateTime(depTime);
+        arrDateTime = arrDate.ToDateTime(arrTime);
+        flightTime = (depDateTime - arrDateTime).Duration();   
+        
+        var flight5 = new Flight("CR803", depDateTime, arrDateTime, 150, flightTime, _airplanes[3],_crewMemberList[0]);
+        flight5.AddToList();
+        _airplanes[3].FlightCount++;
         
     }
 

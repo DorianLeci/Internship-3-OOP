@@ -325,9 +325,9 @@ public class Passenger:Person
         Console.WriteLine($"\nUspješno otkazan let {chosenFlight.Name} povezan s avionom {chosenFlight.Airplane.Name} u trenutku: {this.UpdateTime:yyyy-MM-dd HH:mm}." +
                           $"Odabrana kategorija: {chosenCategory}");        
     }
-    private static List<Flight> AvailableFlightsForCancelation(List<Flight> userFlightList)
+    public static List<Flight> AvailableFlightsForCancelation(List<Flight> flightList)
     {
-        return userFlightList.FindAll(flight => (flight.DepartureDate - DateTime.Now).TotalHours > 24);
+        return flightList.FindAll(flight => (flight.DepartureDate - DateTime.Now).TotalHours > 24);
     }
 
     private void SearchFlightMenu()
@@ -395,6 +395,14 @@ public class Passenger:Person
             {
                 passenger._usrFlightDict.Remove(flight);
             }
+        }
+    }
+
+    public static void RemoveFlightByReference(Flight flight)
+    {
+        foreach(var passenger in _passengerList)
+        {
+            passenger._usrFlightDict.Remove(flight);
         }
     }
 }
