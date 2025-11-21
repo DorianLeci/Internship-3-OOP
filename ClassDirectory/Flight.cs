@@ -42,6 +42,17 @@ public class
     {
         _flightList.Add(this);
     }
+
+    public void DecrementCategoryCapacity(Categories category)
+    {
+        this._capacityCount[category]--;
+    }
+
+    public List<Categories> GetCategories()
+    {
+        return _capacityCount.Keys.ToList();
+    }
+    
     public static void AddFlight()
     {
         Helper.SleepAndClear();

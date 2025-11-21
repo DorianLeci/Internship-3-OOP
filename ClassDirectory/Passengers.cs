@@ -5,7 +5,7 @@ public class Passenger:Person
     public string Email { get; }
     private readonly string _password;
     private static List<Passenger> _passengerList = [];
-    private static List<Flight> _reservedFlightList = [];
+    private Dictionary<Flight,Categories> _usrFlightDict = new Dictionary<Flight,Categories>();
 
     public Passenger(string name, string surname, string email, int birthYear, char gender, string password) :
         base(name, surname, birthYear, gender)
@@ -55,7 +55,7 @@ public class Passenger:Person
             Console.WriteLine("Neuspješna prijava pokušaj ponovno kasnije.\n");
         
         Console.WriteLine("\nUspješna prijava.\n");
-        PassengerFlightMenu();
+        PassengerFlightMenu(_passengerList.Find(passenger => string.Equals(passenger.Email,email) && string.Equals(passenger._password,password))!);
     }
     
     private static string EmailRegisterInput()
@@ -187,7 +187,7 @@ public class Passenger:Person
         return  (isSpecialChar && isUpperChar && inputPassword.Length>=8);
     }
 
-    private static void PassengerFlightMenu()
+    private static void PassengerFlightMenu(Passenger user)
     {
             Helper.SleepAndClear();
             Console.WriteLine("\n----------------------");
@@ -212,7 +212,7 @@ public class Passenger:Person
                         break;
                     case '2':
                         Helper.MessagePrintAndSleep("\nUspješan odabir.Rezervacija leta.\n");
-                        ChooseFlight();
+                        user.ChooseFlight();
                         Helper.WaitingUser();
                         break;
                     default:
@@ -220,10 +220,10 @@ public class Passenger:Person
                         break;
                 }
     }   
-    private static void ChooseFlight()
+    private void ChooseFlight()
     {
         Helper.SleepAndClear();
-        var flightsWithoutOverlap=Flight.AvailableFlightsForThisUser(_reservedFlightList);
+        var flightsWithoutOverlap=Flight.AvailableFlightsForThisUser(_usrFlightDict.Keys.ToList());
         var chosenFlight = Flight.SearchById(flightsWithoutOverlap);
         
         if (chosenFlight == null)
@@ -235,12 +235,29 @@ public class Passenger:Person
         chosenFlight.OutputCapacityForOneFlight(true);
         
         var chosenCategory = Flight.ChooseCategory();
+
+        if (chosenCategory == null)
+        {
+            Console.WriteLine("\nOdustao si od odabira kategorije u kojoj ćeš sjediti pa si odustao i od rezervacije leta.\n");
+            return;
+        }
+
+        this.UpdateTime = DateTime.Now;
+        this._usrFlightDict.Add(chosenFlight,chosenCategory.Value);
         
-        if (chosenCategory != null) return;
+        chosenFlight.DecrementCategoryCapacity(chosenCategory.Value);
         
-        Console.WriteLine("\nOdustao si od odabira kategorije u kojoj ćeš sjediti pa si odustao i od rezervacije leta.\n");
-        return;
+        Console.WriteLine($"\nUspješno rezerviran let {chosenFlight.Name} povezan s avionom {chosenFlight.Airplane} u trenutku: {this.UpdateTime}." +
+                          $"Odabrana kategorija: {chosenCategory}");
+        
     }
+
+    public void AddToFlightDict(Flight flight, Categories category)
+    {
+        this._usrFlightDict.Add(flight, category);
+        flight.DecrementCategoryCapacity(category);
+    }
+    
     
 }
 

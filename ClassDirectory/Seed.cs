@@ -4,6 +4,7 @@ public class Seed
 {
     private static List<Airplane> _airplanes = [];
     private static List<Crew> _crewMemberList = [];
+    private static List<Flight> _flights = [];
     public static void DataSeed()
     {
         var pass1 = new Passenger("Dorian", "Leci", "zandzartz@gmail.com", 2004,'M', "FujF48Ym#");
@@ -14,6 +15,10 @@ public class Seed
         AirplaneSeed();
         StaffMemberSeed();
         FlightSeed();
+        
+        pass1.AddToFlightDict(_flights[0],_flights[0].GetCategories()[1]);
+        pass2.AddToFlightDict(_flights[0],_flights[0].GetCategories()[1]);
+        pass3.AddToFlightDict(_flights[1],_flights[1].GetCategories()[1]);
     }
     private static void AirplaneSeed()
     {
@@ -60,6 +65,7 @@ public class Seed
         
         var flight1 = new Flight("CR789", depDateTime, arrDateTime, 150, flightTime, _airplanes[1],_crewMemberList[0]);
         flight1.AddToList();
+        _flights.Add(flight1);
         _airplanes[1].FlightCount++;
 
         
@@ -73,6 +79,7 @@ public class Seed
         
         var flight2 = new Flight("CR800", depDateTime, arrDateTime, 150, flightTime, _airplanes[2],_crewMemberList[1]);
         flight2.AddToList();
+        _flights.Add(flight2);
         _airplanes[2].FlightCount++;
 
         
@@ -86,6 +93,7 @@ public class Seed
         
         var flight3 = new Flight("CR801", depDateTime, arrDateTime, 150, flightTime, _airplanes[0],_crewMemberList[2]);
         flight3.AddToList();
+        _flights.Add(flight3);
         _airplanes[0].FlightCount++;
         
         depDate = new DateOnly(2025, 11, 25);
