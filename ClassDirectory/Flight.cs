@@ -93,8 +93,8 @@ public class
     {
         var depDateTimeString = this.DepartureDate.ToString("yyyy-MM-dd HH:mm");
         var arrDateTimeString=this.ArrivalDate.ToString("yyyy-MM-dd HH:mm");
-        Console.WriteLine("{0} - {1} - {2} - {3} - {4} -{5} - {6} - {7} - {8}\n",this.Id,this.Name,depDateTimeString,arrDateTimeString,
-            this.Distance,this.FlightTime,this.Airplane.Name,this.FlightCrew.Id,this.FlightCrew.CrewName);   
+        Console.WriteLine("{0} - {1} - {2} - {3} - {4} - {5:hh\\:mm} - {6} - {7} - {8}\n",this.Id,this.Name,depDateTimeString,arrDateTimeString,
+            this.Distance, this.FlightTime,this.Airplane.Name,this.FlightCrew.Id,this.FlightCrew.CrewName);   
         
         if(isUserReserving)
             OutputCapacityForOneFlight();
@@ -610,5 +610,114 @@ public class
     private int AllPassengersCount()
     {
         return FlightCapacity()-this._capacityCount.Values.Sum();
+    }
+
+    public static void FlightOutputMenu()
+    {
+        while(true){
+            
+            if (Flight.IsFlightListEmpty(_flightList))
+            {
+                Helper.MessagePrintAndSleep("\nLista letova je prazna.Ne možeš ispisivati letove.\n");
+                return;
+            }
+            Console.Clear();
+            Console.WriteLine("\n----------------------");
+            Console.WriteLine("1 - Ispis letova po vremenu polaska(silazno)\n");
+            Console.WriteLine("2 - Ispis letova po vremenu polaska(uzlazno)\n");
+            Console.WriteLine("3 - Ispis letova po vremenu trajanja(silazno)\n");
+            Console.WriteLine("4 - Ispis letova po vremenu trajanja(uzlazno)\n");
+            Console.WriteLine("5 - Ispis letova po udaljenosti(silazno)\n");
+            Console.WriteLine("6 - Ispis letova po udaljenosti(uzlazno)\n");
+            Console.WriteLine("7 - Ispis letova abecedno po imenu(silazno)\n");
+            Console.WriteLine("8 - Ispis letova abecedno po imenu(uzlazno)\n");
+            Console.WriteLine("0 - Povratak na izbornik za letove.");
+            Console.WriteLine("----------------------\n");
+            Console.Write("\nUnos :");
+            var input=Console.ReadKey().KeyChar;
+            switch (input)
+            {
+                case '0':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za prijavljene korisnike.\n");
+                    Program.FlightMenu();
+                    break;
+                case '1':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po vremenu polaska(silazno).");
+                    OutputByDepTime(false,SortKey.DepDateTime);
+                    Helper.WaitingUser();
+                    break;
+                case '2':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po vremenu polaska(uzlazno).\n");
+                    OutputByDepTime(true,SortKey.DepDateTime);                           
+                    Helper.WaitingUser();
+                    break;
+                case '3':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po vremenu trajanja(silazno).\n");
+                    OutputByDepTime(false,SortKey.FlightTime);                           
+                    Helper.WaitingUser();
+                    break;
+                case '4':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po vremenu trajanja(uzlazno).\n");
+                    OutputByDepTime(true,SortKey.FlightTime);                           
+                    Helper.WaitingUser();
+                    break;
+                case '5':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po udaljenosti(silazno).\n");
+                    OutputByDepTime(false,SortKey.FlightDistance);                           
+                    Helper.WaitingUser();
+                    break;
+                case '6':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po udaljenosti(uzlazno).\n");
+                    OutputByDepTime(true,SortKey.FlightDistance);                           
+                    Helper.WaitingUser();
+                    break;
+                case '7':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova abecedno po imenu(silazno).\n");
+                    OutputByDepTime(false,SortKey.Name);                           
+                    Helper.WaitingUser();
+                    break;
+                case '8':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova abecedno po imenu(uzlazno).\n");
+                    OutputByDepTime(true,SortKey.Name);                           
+                    Helper.WaitingUser();
+                    break;
+                default:
+                    Helper.MessagePrintAndSleep("\nUnos nije ponuđenima.Unesi ponovno.\n");
+                    break;
+            }
+        }          
+    }
+
+    private enum SortKey
+    {
+        DepDateTime,
+        FlightTime,
+        FlightDistance,
+        Name
+    }
+    private static void OutputByDepTime(bool isAscending,SortKey key)
+    {
+        var flightList = key switch
+        {
+            SortKey.DepDateTime => (isAscending)
+                ? _flightList.OrderBy(flight => flight.DepartureDate).ToList()
+                : _flightList.OrderByDescending(flight => flight.DepartureDate).ToList(),
+            
+            SortKey.FlightTime => (isAscending)
+                ? _flightList.OrderBy(flight => flight.FlightTime).ToList()
+                : _flightList.OrderByDescending(flight => flight.FlightTime).ToList(),
+            
+            SortKey.FlightDistance => (isAscending)
+                ? _flightList.OrderBy(flight => flight.Distance).ToList()
+                : _flightList.OrderByDescending(flight => flight.Distance).ToList(),
+            
+            SortKey.Name => (isAscending)
+                ? _flightList.OrderBy(flight => flight.Name).ToList()
+                : _flightList.OrderByDescending(flight => flight.Name).ToList(),
+            
+            _ => []
+        };
+        
+        AllAvailableFlights(false,flightList);
     }
 }

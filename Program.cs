@@ -186,7 +186,7 @@ class Program
         {
             Console.Clear();
             Console.WriteLine("\n----------------------");
-            Console.WriteLine("1 - Prikaz svih letova\n");
+            Console.WriteLine("1 - Izbornik za prikaz svih letova\n");
             Console.WriteLine("2 - Dodavanje leta\n");
             Console.WriteLine("3 - Pretraživanje letova\n");
             Console.WriteLine("4 - Uređivanje leta\n");
@@ -203,8 +203,8 @@ class Program
                         MainMenu();
                         break;
                     case '1':
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova\n");
-                        Flight.AllAvailableFlights(false);
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Izbornik za prikaz svih letova\n");
+                        Flight.FlightOutputMenu();
                         Helper.WaitingUser();
                         break;
                     case '2':

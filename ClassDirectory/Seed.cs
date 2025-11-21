@@ -65,7 +65,7 @@ public class Seed
     {
         var depDate = new DateOnly(2025, 11, 22);
         var depTime = new TimeOnly(12, 30);
-        var arrDate = new DateOnly(2025, 12, 11);
+        var arrDate = new DateOnly(2025, 11, 22);
         var arrTime = new TimeOnly(13,30);
         var depDateTime = depDate.ToDateTime(depTime);
         var  arrDateTime = arrDate.ToDateTime(arrTime);
@@ -77,7 +77,7 @@ public class Seed
         _airplanes[1].FlightCount++;
 
         
-        depDate = new DateOnly(2025, 11, 22);
+        depDate = new DateOnly(2025, 12, 12);
         depTime = new TimeOnly(11,40);
         arrDate = new DateOnly(2025, 12, 13);
         arrTime = new TimeOnly(03,40);
@@ -85,7 +85,7 @@ public class Seed
         arrDateTime = arrDate.ToDateTime(arrTime);
         flightTime = (depDateTime - arrDateTime).Duration();
         
-        var flight2 = new Flight("CR800", depDateTime, arrDateTime, 150, flightTime, _airplanes[2],_crewMemberList[1]);
+        var flight2 = new Flight("CR800", depDateTime, arrDateTime, 110, flightTime, _airplanes[2],_crewMemberList[1]);
         flight2.AddToList();
         _flights.Add(flight2);
         _airplanes[2].FlightCount++;
@@ -99,7 +99,7 @@ public class Seed
         arrDateTime = arrDate.ToDateTime(arrTime);
         flightTime = (depDateTime - arrDateTime).Duration();   
         
-        var flight3 = new Flight("CR801", depDateTime, arrDateTime, 150, flightTime, _airplanes[0],_crewMemberList[2]);
+        var flight3 = new Flight("CR801", depDateTime, arrDateTime, 200, flightTime, _airplanes[0],_crewMemberList[2]);
         flight3.AddToList();
         _flights.Add(flight3);
         _airplanes[0].FlightCount++;
@@ -112,7 +112,7 @@ public class Seed
         arrDateTime = arrDate.ToDateTime(arrTime);
         flightTime = (depDateTime - arrDateTime).Duration();   
         
-        var flight4 = new Flight("CR802", depDateTime, arrDateTime, 150, flightTime, _airplanes[0],_crewMemberList[0]);
+        var flight4 = new Flight("CR802", depDateTime, arrDateTime, 300, flightTime, _airplanes[0],_crewMemberList[0]);
         flight4.AddToList();
         _airplanes[0].FlightCount++;
         
@@ -124,7 +124,7 @@ public class Seed
         arrDateTime = arrDate.ToDateTime(arrTime);
         flightTime = (depDateTime - arrDateTime).Duration();   
         
-        var flight5 = new Flight("CR803", depDateTime, arrDateTime, 150, flightTime, _airplanes[3],_crewMemberList[0]);
+        var flight5 = new Flight("CR803", depDateTime, arrDateTime, 250, flightTime, _airplanes[3],_crewMemberList[0]);
         flight5.AddToList();
         _airplanes[3].FlightCount++;
         
