@@ -86,7 +86,6 @@ public class Passenger:Person
     private static string EmailLoginInput()
     {
         Helper.SleepAndClear();
-        Console.WriteLine("\nUnos emaila.");
         var counter = 5;
         while(true)
         {
@@ -161,7 +160,7 @@ public class Passenger:Person
                     return "";
             }
 
-            Console.WriteLine("Unesi lozinku.");
+            Console.Write("Unesi lozinku: ");
 
             
             var inputPassword = Console.ReadLine()!.Trim();
@@ -195,8 +194,9 @@ public class Passenger:Person
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Prikaz svih rezerviranih letova\n");
             Console.WriteLine("2 - Rezervacija leta\n");
+            Console.WriteLine("3 - Pretraživanje letova\n");
             Console.WriteLine("4 - Otkazivanje leta\n");
-            Console.WriteLine("0 - Povratak na izbornik za putnike (Logout).");
+            Console.WriteLine("0 - Povratak na izbornik za korisnike.(Logout).");
             Console.WriteLine("----------------------\n");
             Console.Write("Unos: ");
             var input = Console.ReadKey().KeyChar;
@@ -214,6 +214,11 @@ public class Passenger:Person
                 case '2':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Rezervacija leta.\n");
                     user.ChooseFlight();
+                    Helper.WaitingUser();
+                    break;
+                case '3':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje letova.\n");
+                    user.SearchFlightMenu();
                     Helper.WaitingUser();
                     break;
                 case '4':
@@ -323,6 +328,62 @@ public class Passenger:Person
     private static List<Flight> AvailableFlightsForCancelation(List<Flight> userFlightList)
     {
         return userFlightList.FindAll(flight => (flight.DepartureDate - DateTime.Now).TotalHours > 24);
+    }
+
+    private void SearchFlightMenu()
+    { 
+        while(true){
+            
+            var flightList = _usrFlightDict.Keys.ToList();
+                if (Flight.IsFlightListEmpty(flightList))
+                {
+                    Helper.MessagePrintAndSleep("\nLista letova je prazna.Ne možeš pretraživati.Povratak na izbornik za letove nakon pritiska tipke.");
+                    return;
+                }
+                Console.Clear();
+                Console.WriteLine("\n----------------------");
+                Console.WriteLine("1 - Pretraživanje rezerviranih letova po id-u\n");
+                Console.WriteLine("2 - Pretraživanje letova po nazivu\n");
+                Console.WriteLine("0 - Povratak na izbornik za prijavljene korisnike.");
+                Console.WriteLine("----------------------\n");
+                Console.Write("\nUnos :");
+                var input=Console.ReadKey().KeyChar;
+                    switch (input)
+                    {
+                        case '0':
+                            Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za letove.\n");
+                            Program.FlightMenu();
+                            break;
+                        case '1':
+                            Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje po id-u.");
+                            var searchedFlightById = Flight.SearchById(flightList);
+                            if (searchedFlightById == null)
+                            {
+                                Helper.WaitingUser();
+                                break;
+                            }
+                            Helper.MessagePrintAndSleep("\nUspješan pronalazak leta.");
+                            searchedFlightById.OutputForOneFlight(false);
+                            Helper.WaitingUser();
+                            break;
+                        case '2':
+                            Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje po nazivu.\n");
+                            var searchedAirplaneByName = Flight.SearchByName(flightList);
+                            if (searchedAirplaneByName == null)
+                            {
+                                Helper.WaitingUser();
+                                break;
+                            }
+                            
+                            Helper.MessagePrintAndSleep("\nUspješan pronalazak leta.");
+                            searchedAirplaneByName.OutputForOneFlight(false);
+                            Helper.WaitingUser();
+                            break;
+                        default:
+                            Helper.MessagePrintAndSleep("\nUnos nije ponuđenima.Unesi ponovno.\n");
+                            break;
+                    }
+            }           
     }
 }
 

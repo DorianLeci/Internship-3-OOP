@@ -87,7 +87,7 @@ public class
         
     }
 
-    private void OutputForOneFlight(bool isUserReserving)
+    public void OutputForOneFlight(bool isUserReserving)
     {
         var depDateTimeString = this.DepartureDate.ToString("yyyy-MM-dd HH:mm");
         var arrDateTimeString=this.ArrivalDate.ToString("yyyy-MM-dd HH:mm");
@@ -291,7 +291,7 @@ public class
             Console.Clear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Pretraživanje letova po id-u\n");
-            Console.WriteLine("2 - Pretraživanja letova po nazivu\n");
+            Console.WriteLine("2 - Pretraživanje letova po nazivu\n");
             Console.WriteLine("0 - Povratak na izbornik za letove");
             Console.WriteLine("----------------------\n");
             Console.Write("\nUnos :");
@@ -334,9 +334,10 @@ public class
         }             
     }
 
-    private static bool IsFlightListEmpty()
+    public static bool IsFlightListEmpty(List<Flight>? flightList=null)
     {
-        return _flightList.Count == 0;
+        flightList ??= _flightList;
+        return flightList.Count == 0;
     }
     public static Flight? SearchById(List<Flight> flightList,bool isUserReserving=false)
     {
@@ -365,20 +366,22 @@ public class
         return null;        
     }
 
-    private static Flight? SearchByName()
+    public static Flight? SearchByName(List<Flight>? flightList=null)
     {
+        flightList ??= _flightList;
         Helper.SleepAndClear();
-        AllAvailableFlights(false);
+        
+        AllAvailableFlights(false,flightList);
         do
         {
-            var searchIndex=Helper.FormatAndSearchByName(_flightList);
+            var searchIndex=Helper.FormatAndSearchByName(flightList);
             if (searchIndex == -1)
             {
                 Console.WriteLine("Let s traženim imenom ne postoji");
                 continue;
             }
 
-            return _flightList[searchIndex];
+            return flightList[searchIndex];
 
         } while (Helper.ConfirmationMessage("ponovno unijeti ime"));
 
