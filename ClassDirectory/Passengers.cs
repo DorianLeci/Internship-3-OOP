@@ -4,7 +4,8 @@ public class Passenger:Person
 {
     public string Email { get; }
     private readonly string _password;
-    private static List<Passenger> _passengerList = new List<Passenger>();
+    private static List<Passenger> _passengerList = [];
+    private static List<Flight> _reservedFlightList = [];
 
     public Passenger(string name, string surname, string email, int birthYear, char gender, string password) :
         base(name, surname, birthYear, gender)
@@ -13,7 +14,7 @@ public class Passenger:Person
         this._password = password;
         _passengerList.Add(this);
     }
-    public static void PassengerRegistration(bool isPassengerNew)
+    public static void PassengerRegistration()
     {
         Helper.SleepAndClear();
         var name = Helper.NameSurnameInput("ime");
@@ -28,17 +29,18 @@ public class Passenger:Person
             Console.WriteLine("\nOdustao si od unosa novog putnika.\n");
             return;
         }      
+        
         var registeredPassenger=new Passenger( name,surname, email,birthYear,gender, password);
         Console.WriteLine($"\nUspješna registracija u trenutku: {registeredPassenger.CreationTime:yyyy-MM-dd HH:mm}\n");
         registeredPassenger.PassengerInfo();
-        Console.WriteLine();
+        
     }
 
     private void PassengerInfo()
     {
         Console.WriteLine($"{this.Name} -  {this.Surname} - {this.Email} - {this.BirthYear} - {this.Gender} - {this._password}");
     }
-    public static void PassengerLogin(bool isPassengerNew)
+    public static void PassengerLogin()
     {
         Helper.SleepAndClear();
         var email = Passenger.EmailLoginInput();
@@ -51,6 +53,9 @@ public class Passenger:Person
         var password = Passenger.PasswordLoginInput(email);
         if(password == "")
             Console.WriteLine("Neuspješna prijava pokušaj ponovno kasnije.\n");
+        
+        Console.WriteLine("\nUspješna prijava.\n");
+        PassengerFlightMenu();
     }
     
     private static string EmailRegisterInput()
@@ -166,7 +171,6 @@ public class Passenger:Person
                 counter--;
                 continue;
             }
-            Console.WriteLine("\nUspješna prijava.\n");
             return inputPassword;
         }        
     }
@@ -182,4 +186,62 @@ public class Passenger:Person
         
         return  (isSpecialChar && isUpperChar && inputPassword.Length>=8);
     }
+
+    private static void PassengerFlightMenu()
+    {
+            Helper.SleepAndClear();
+            Console.WriteLine("\n----------------------");
+            Console.WriteLine("1 - Prikaz svih rezerviranih letova\n");
+            Console.WriteLine("2 - Rezervacija leta\n");
+            Console.WriteLine("3 - Pretraživanje letova\n");
+            Console.WriteLine("4 - Uređivanje leta\n");
+            Console.WriteLine("0 - Povratak na izbornik za putnike.");
+            Console.WriteLine("----------------------\n");
+            Console.Write("Unos: ");
+            var input = Console.ReadKey().KeyChar;
+                switch (input)
+                {
+                    case '0':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za putnike.\n");
+                        Console.WriteLine();
+                        Program.PassengerMenu();
+                        break;
+                    case '1':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova koje si rezerviao.\n");
+                        Helper.WaitingUser();
+                        break;
+                    case '2':
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Rezervacija leta.\n");
+                        ChooseFlight();
+                        Helper.WaitingUser();
+                        break;
+                    default:
+                        Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
+                        break;
+                }
+    }   
+    private static void ChooseFlight()
+    {
+        Helper.SleepAndClear();
+        var flightsWithoutOverlap=Flight.AvailableFlightsForThisUser(_reservedFlightList);
+        var chosenFlight = Flight.SearchById(flightsWithoutOverlap);
+        
+        if (chosenFlight == null)
+        {
+            Console.WriteLine("\nOdustao si od unošenja id-a leta pa si odustao i od rezervacije leta.\n");
+            return;
+        }
+        
+        chosenFlight.OutputCapacityForOneFlight(true);
+        
+        var chosenCategory = Flight.ChooseCategory();
+        
+        if (chosenCategory != null) return;
+        
+        Console.WriteLine("\nOdustao si od odabira kategorije u kojoj ćeš sjediti pa si odustao i od rezervacije leta.\n");
+        return;
+    }
+    
 }
+
+

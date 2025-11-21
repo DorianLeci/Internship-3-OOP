@@ -5,7 +5,8 @@ using System.Text.RegularExpressions;
 
 namespace Internship_3_OOP.ClassDirectory;
 
-public class Flight: IHasName
+public class 
+    Flight: IHasName
 {
     public int Id { get; }
     public string Name { get; }
@@ -19,6 +20,8 @@ public class Flight: IHasName
     public Crew FlightCrew { get; set; }
     private static List<Flight> _flightList = new List<Flight>();
 
+    private Dictionary<Categories, int> _capacityCount;
+
     public Flight(string name, DateTime departureDate,DateTime arrivalDate,double distance,TimeSpan flightTime,Airplane airplane,Crew flightCrew)
     {
         this.Id = Helper.IdGenerator();
@@ -31,6 +34,8 @@ public class Flight: IHasName
         this.FlightCrew = flightCrew;
         this.CreationTime = DateTime.Now;
         this.UpdateTime = DateTime.Now;
+
+        this._capacityCount = Airplane.GetCategoriesAndCapacity();
     }
 
     public void AddToList()
@@ -39,7 +44,7 @@ public class Flight: IHasName
     }
     public static void AddFlight()
     {
-        Console.Clear();
+        Helper.SleepAndClear();
         var name = FlightNameInput();
         var distance = FlightDistanceInput();
         var departureDate = DepartureDateInput();
@@ -57,10 +62,12 @@ public class Flight: IHasName
 
     }
 
-    public static void FlightFormattedOutput()
+    public static void FlightFormattedOutput(List<Flight>? flightList=null)
     {
+        flightList ??= _flightList;
+        
         Console.WriteLine("\n--------------");
-        foreach(var flight in _flightList)
+        foreach(var flight in flightList)
         {
             flight.OutputForOneFlight();
         }
@@ -73,7 +80,22 @@ public class Flight: IHasName
         var depDateTimeString = this.DepartureDate.ToString("yyyy-MM-dd HH:mm");
         var arrDateTimeString=this.ArrivalDate.ToString("yyyy-MM-dd HH:mm");
         Console.WriteLine("{0} - {1} - {2} - {3} - {4} -{5} - {6} - {7} - {8}\n",this.Id,this.Name,depDateTimeString,arrDateTimeString,
-            this.Distance,this.FlightTime,this.Airplane.Name,this.FlightCrew.Id,this.FlightCrew.CrewName);        
+            this.Distance,this.FlightTime,this.Airplane.Name,this.FlightCrew.Id,this.FlightCrew.CrewName);   
+        
+        OutputCapacityForOneFlight();
+    }
+
+    public void OutputCapacityForOneFlight(bool outputCapacity=false)
+    {
+        if (!outputCapacity) return;
+        
+        Console.WriteLine("\nIspis dostupnih slobodnih mjesta po svakoj kategoriji(id kategorije - ime kategorije - broj dostupnih sjedala).\n");        
+        
+        var filtratedDictByValue = _capacityCount.Where(kvPair => kvPair.Value > 0);
+        var printString =string.Join(", ",filtratedDictByValue.Select(kvPair=>$"{(int)kvPair.Key} - {kvPair.Key}  - {kvPair.Value}"));
+        
+        Console.WriteLine($"\n[{printString}]\n");
+
     }
     private static string FlightNameInput()
     {
@@ -271,7 +293,7 @@ public class Flight: IHasName
                         break;
                     case '1':
                         Helper.MessagePrintAndSleep("\nUspješan odabir.Pretraživanje po id-u.");
-                        var searchedFlightById = SearchById();
+                        var searchedFlightById = SearchById(_flightList);
                         if (searchedFlightById == null)
                         {
                             Helper.WaitingUser();
@@ -305,9 +327,9 @@ public class Flight: IHasName
     {
         return _flightList.Count == 0;
     }
-    private static Flight? SearchById()
+    public static Flight? SearchById(List<Flight> flightList)
     {
-        Console.Clear();
+        Helper.SleepAndClear();
         AllAvailableFlights();
         do
         {
@@ -318,13 +340,13 @@ public class Flight: IHasName
                 continue;               
             }
             
-            var exist = _flightList.Any(plane => plane.Id == inputId);
+            var exist = flightList.Any(plane => plane.Id == inputId);
             if (!exist)
             {
                 Console.WriteLine("Let s traženim id-om ne postoji");
                 continue;
             }
-            return _flightList.Find(plane => plane.Id == inputId);
+            return flightList.Find(flight => flight.Id == inputId);
                     
         } while (Helper.ConfirmationMessage("ponovno unijeti id"));
 
@@ -333,7 +355,7 @@ public class Flight: IHasName
 
     private static Flight? SearchByName()
     {
-        Console.Clear();
+        Helper.SleepAndClear();
         AllAvailableFlights();
         do
         {
@@ -353,14 +375,14 @@ public class Flight: IHasName
     private static void AllAvailableFlights()
     {
         Console.WriteLine("Ispis svih dostupnih letova");
-        FlightFormattedOutput();
+        FlightFormattedOutput(_flightList);
     }
 
     public static void FlightEdit()
     {
-        Console.Clear();
+        Helper.SleepAndClear();
         AllAvailableFlights();
-        var returnedFlight=SearchById();
+        var returnedFlight=SearchById(_flightList);
 
         returnedFlight?.FoundFlightEdit();
     }
@@ -475,5 +497,40 @@ public class Flight: IHasName
             ? oldCrew : ChooseCrew(depDateTime, arrDateTime,true,oldCrew);        
     }
 
-    
+    public static List<Flight> AvailableFlightsForThisUser(List<Flight> userFlightList)
+    {
+        var filtratedByOverlap = _flightList.FindAll(flight => userFlightList
+            .All(usrFlight => !Crew.FlightsOverlap(flight.DepartureDate, flight.ArrivalDate, usrFlight.DepartureDate,
+                usrFlight.ArrivalDate)));
+
+        var filtratedByCapacity =
+            filtratedByOverlap.FindAll(flight => flight._capacityCount.Any(kvPair => kvPair.Value > 0));
+
+        return filtratedByCapacity;
+    }
+
+    public static Categories? ChooseCategory()
+    {
+        AllAvailableFlights();
+        do
+        {
+            Console.Write("\nUnesi kategoriju(broj kategorije): ");
+            if (!Helper.EnumFormatCheck(out Categories category))
+            {
+                Console.WriteLine("\nPogrešan format unosa.\n");
+                continue;               
+            }
+
+            if (!Helper.IsDefinedInEnum(category))
+            {
+                Console.WriteLine("\nTa kategorija nije navedena.\n");
+                continue;
+            }
+
+            return category;
+
+        } while (Helper.ConfirmationMessage("ponovno unijeti broj kategorije"));
+
+        return null; 
+    }
 }

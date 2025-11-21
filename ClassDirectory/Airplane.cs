@@ -32,6 +32,10 @@ public class Airplane:IHasName
         this.updateTime = DateTime.Now;
     }
 
+    public Dictionary<Categories,int> GetCategoriesAndCapacity()
+    {
+        return new Dictionary<Categories,int>(_categoriesDict);
+    }
     public void AddToList()
     {
         _airplaneList.Add(this);

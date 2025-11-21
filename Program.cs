@@ -56,7 +56,7 @@ class Program
         }
     }
 
-    static void PassengerMenu()
+    public static void PassengerMenu()
     {
         while (true)
         {
@@ -76,7 +76,7 @@ class Program
                         break;
                     case '1':
                         Helper.MessagePrintAndSleep("\nUspješan odabir.Registracija putnika.\n");
-                        Passenger.PassengerRegistration(true);
+                        Passenger.PassengerRegistration();
                         Helper.WaitingUser();
                         break;
                     case '2':
@@ -87,7 +87,7 @@ class Program
                         else
                         {
                             Helper.MessagePrintAndSleep("\nUspješan odabir.Prijava putnika\n");
-                            Passenger.PassengerLogin(false);                           
+                            Passenger.PassengerLogin();                           
                         }
 
                         Helper.WaitingUser();

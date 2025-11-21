@@ -132,9 +132,9 @@ public class Crew
         return found.Count != 0;
     }
 
-    private static bool FlightsOverlap(DateTime start1,DateTime end1,DateTime start2,DateTime end2)
+    public static bool FlightsOverlap(DateTime start1,DateTime end1,DateTime start2,DateTime end2)
     {
-        return start1 < end2 && start2 < end1;
+        return start1 <=end2 && start2 <=end1;
     }
     
     
