@@ -24,7 +24,7 @@ public class Crew
     {
         _crewList.Add(this);
     }
-    public static void CreateNewCrew()
+    public static void CreateNewCrew(bool isConfirmationNeeded=true)
     {
         Helper.SleepAndClear();
         if (StaffMember.ListOfAllAvailableMembers(StaffMember.MemberTypeEnum.Pilot).Count==0)
@@ -56,7 +56,7 @@ public class Crew
         var flightAttendant1=AddFlightAttendant(crewName);
         var flightAttendant2=AddFlightAttendant(crewName);
 
-        if (!Helper.ConfirmationMessage("unijeti novu posadu"))
+        if (isConfirmationNeeded && !Helper.ConfirmationMessage("unijeti novu posadu"))
         {
             Console.WriteLine("\nOdustao si od unosa nove posade.\n");
             return;
@@ -110,13 +110,26 @@ public class Crew
         var joinString=string.Join(", ", enumerable);
         Console.WriteLine($"{this.Id} - {this.CrewName} - [{joinString}]");        
     }
-    public static List<Crew> FindAvailableCrews(DateTime depDateTime,DateTime arrDateTime,List<Flight>flightList)
+    public static List<Crew> FindAvailableCrews(DateTime depDateTime,DateTime arrDateTime,List<Flight>flightList,bool isCrewChanged=false,Crew ? oldCrew=null)
     {
-        var found = flightList.FindAll(flight =>FlightsOverlap(flight.DepartureDate,flight.ArrivalDate,depDateTime,arrDateTime)).Distinct().ToList();
+        var found = flightList.FindAll(flight =>FlightsOverlap(flight.DepartureDate,flight.ArrivalDate,depDateTime,arrDateTime)).DistinctBy(flight=>flight.Id).ToList();
         var busyCrews=found.Select(flight => flight.FlightCrew).ToList();
+        
         var crewListFiltrated=_crewList.Where(crew=>!busyCrews.Contains(crew)).ToList();
+        
+        if(isCrewChanged && oldCrew!=null)
+            crewListFiltrated.RemoveAll(crew=>crew.CrewName==oldCrew.CrewName);
 
         return crewListFiltrated;
+    }
+
+    public static bool FlightsOverlapWithCurrentCrew(DateTime depDateTime,DateTime arrDateTime,List<Flight>flightList,Crew currCrew,Flight currFlight)
+    {
+        var found = flightList.FindAll(flight =>
+            FlightsOverlap(flight.DepartureDate, flight.ArrivalDate, depDateTime, arrDateTime) &&
+            flight.FlightCrew.CrewName == currCrew.CrewName && flight!=currFlight);
+
+        return found.Count != 0;
     }
 
     private static bool FlightsOverlap(DateTime start1,DateTime end1,DateTime start2,DateTime end2)

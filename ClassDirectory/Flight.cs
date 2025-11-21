@@ -16,7 +16,7 @@ public class Flight: IHasName
     public DateTime CreationTime { get; }
     public DateTime UpdateTime { get; set; }
     public Airplane Airplane { get; }
-    public Crew FlightCrew { get; }
+    public Crew FlightCrew { get; set; }
     private static List<Flight> _flightList = new List<Flight>();
 
     public Flight(string name, DateTime departureDate,DateTime arrivalDate,double distance,TimeSpan flightTime,Airplane airplane,Crew flightCrew)
@@ -181,12 +181,18 @@ public class Flight: IHasName
             Console.WriteLine("Ne postoji avion s unesenim imenom.\n");
         }
     }
-    private static Crew ChooseCrew(DateTime depDateTime,DateTime arrDateTime)
+    private static Crew ChooseCrew(DateTime depDateTime,DateTime arrDateTime,bool isCrewChanged=false,Crew ? oldCrew=null)
     {
         Helper.SleepAndClear();
         Console.WriteLine("\nPridruživanje posade letu (prikazuju se samo posade koje nisu zauzete u trenutku ovog leta).\n");
         
-        var foundCrews=Crew.FindAvailableCrews(depDateTime, arrDateTime,_flightList);
+        var foundCrews=Crew.FindAvailableCrews(depDateTime, arrDateTime,_flightList,isCrewChanged,oldCrew);
+        if (foundCrews.Count == 0)
+        {
+            Helper.MessagePrintAndSleep("\nNema niti jedne dostupne posade.Moraš unijeti novu.\n");
+            Helper.WaitingUser();
+            Crew.CreateNewCrew(false);
+        }
         
         foreach (var crew in foundCrews)
         {
@@ -210,7 +216,6 @@ public class Flight: IHasName
             }
             return foundCrews[index];
             
-
         }
     }
 
@@ -348,10 +353,7 @@ public class Flight: IHasName
     private static void AllAvailableFlights()
     {
         Console.WriteLine("Ispis svih dostupnih letova");
-        foreach (var flight in _flightList)
-        {
-            Console.WriteLine("{0} - {1} - {2}",flight.Id,flight.Name,flight.Airplane.Name);
-        }
+        FlightFormattedOutput();
     }
 
     public static void FlightEdit()
@@ -367,24 +369,46 @@ public class Flight: IHasName
     {
         var oldDepDateTime = this.DepartureDate;
         var oldArrDateTime = this.ArrivalDate;
+        var oldFlightCrew = this.FlightCrew;
+        
         var newDepDateTime=DepDateTimeEdit(oldDepDateTime);
         var newArrDateTime=ArrDateTimeEdit(newDepDateTime,oldArrDateTime);
+        var newCrew = FlightCrewEdit(newDepDateTime,newArrDateTime,oldFlightCrew,this);
 
-        if (oldDepDateTime == newDepDateTime && oldArrDateTime == newArrDateTime)
+        if (newDepDateTime == oldDepDateTime && newArrDateTime == oldArrDateTime && newCrew == oldFlightCrew)
         {
-            Console.WriteLine("Ništa nisi promijenio.\n");
+            Console.WriteLine("\nNisi ništa promijenio.\n");
             return;
         }
-
+        
         if (!Helper.ConfirmationMessage($"izmijeni let: {this.Id} - {this.Name} - {this.Airplane.Name}"))
         {
             Console.WriteLine("\nOdustao si od izmjene.\n");
             return;
         }
 
-        Console.WriteLine($"\nUspješna izmjena leta: {this.Id} - {this.Name} - {this.Airplane.Name}\n");
-        this.ArrivalDate = newArrDateTime;
-        this.DepartureDate = newDepDateTime;
+        Console.WriteLine($"\nUspješna izmjena leta: [{this.Id}] - {this.Name} - {this.Airplane.Name}\n");
+
+        if (oldDepDateTime != newDepDateTime)
+        {
+            this.DepartureDate = newDepDateTime;
+            Console.WriteLine($"\nPromjena polaska (staro / novo): {oldDepDateTime:yyyy-MM-dd HH:mm} / {newDepDateTime:yyyy-MM-dd HH:mm}\n");            
+        }
+
+
+        if (oldArrDateTime != newArrDateTime)
+        {
+            this.ArrivalDate = newArrDateTime;
+            Console.WriteLine($"\nPromjena dolaska(staro / novo): {oldArrDateTime:yyyy-MM-dd HH:mm} / {newArrDateTime:yyyy-MM-dd HH:mm}\n");            
+        }
+
+
+        if (oldFlightCrew != newCrew)
+        {
+            this.FlightCrew = newCrew;
+            Console.WriteLine($"\nPromjena posade(staro / novo): {oldFlightCrew.CrewName} / {newCrew.CrewName}\n");           
+        }
+        
         this.FlightTime = (this.ArrivalDate - this.DepartureDate).Duration();
 
 
@@ -407,11 +431,16 @@ public class Flight: IHasName
         if (!CheckArrivalTime(oldArrDateTime, depDateTime))
         {
             Console.WriteLine("\nPromijenio si datum i vrijeme polaska leta i sada vrijeme dolaska više nije vremenski ispred polaska.");
+            Helper.MessagePrintAndSleep("\nMoraš unesti novi datum i vrijeme dolaska leta.\n");
+            Helper.WaitingUser();
             return ArrivalDateInput(depDateTime);
         }
+        
         if (!CheckFlightDuration(oldArrDateTime, depDateTime))
         {
             Console.WriteLine("\nPromijenio si datum i vrijeme polaska leta i sada let traje duže od 24 sata.\n");
+            Helper.MessagePrintAndSleep("\nMoraš unesti novi datum i vrijeme dolaska leta.\n");
+            Helper.WaitingUser();
             return ArrivalDateInput(depDateTime);
         }
         
@@ -429,5 +458,22 @@ public class Flight: IHasName
         var foundFlights = _flightList.FindAll(flight => flight.Airplane.Id == planeId);
         return string.Join(", ",foundFlights.Select(flight=>flight.Id + " - " + flight.Name));
     }
+
+    private static Crew FlightCrewEdit(DateTime depDateTime, DateTime arrDateTime,Crew oldCrew,Flight currFlight)
+    {
+        Helper.SleepAndClear();
+        Console.WriteLine($"\nPromjena posade leta.\nTrenutna posada: {oldCrew.Id} - {oldCrew.CrewName}");
+
+        if (Crew.FlightsOverlapWithCurrentCrew(depDateTime, arrDateTime, _flightList, oldCrew,currFlight))
+        {
+            Helper.MessagePrintAndSleep("\nZbog promjene datuma i vremena leta sada trenutna posada ne može biti na oba leta odjednom.Promijeni posadu.\n");
+            Helper.WaitingUser();
+            return ChooseCrew(depDateTime, arrDateTime,true,oldCrew);
+        }
+            
+        return !Helper.ConfirmationMessage("promijeniti posadu pridruženu letu.") 
+            ? oldCrew : ChooseCrew(depDateTime, arrDateTime,true,oldCrew);        
+    }
+
     
 }
