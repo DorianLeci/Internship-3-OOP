@@ -168,8 +168,9 @@ class Program
                             Helper.WaitingUser();
                             break;
                         }
-                        
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Brisanje aviona.\n");
                         Airplane.DeleteAirplane();
+                        
                         Helper.WaitingUser();
                         break;
                     default:

@@ -383,7 +383,19 @@ public class Passenger:Person
                             Helper.MessagePrintAndSleep("\nUnos nije ponuđenima.Unesi ponovno.\n");
                             break;
                     }
-            }           
+        }           
+    }
+
+    public static void RemoveFlightsWithPlaneId(int planeId)
+    {
+        foreach (var passenger in _passengerList)
+        {
+            var flightsToDelete=passenger._usrFlightDict.Keys.Where(flight => flight.Airplane.Id == planeId).ToList();
+            foreach (var flight in flightsToDelete)
+            {
+                passenger._usrFlightDict.Remove(flight);
+            }
+        }
     }
 }
 

@@ -332,7 +332,7 @@ public class Airplane:IHasName
 
     private static void DeleteById()
     {
-        Console.Clear();
+        Helper.SleepAndClear();
         var planeForDeletion = SearchById();
         if (planeForDeletion == null)
             return;
@@ -342,14 +342,14 @@ public class Airplane:IHasName
             return;
         
         _airplaneList.RemoveAll(plane=>plane.Id == planeForDeletion.Id);
-        Flight.RemoveFlightsWithPlaneId(planeForDeletion.Id);
+        RemoveOtherFlightReferences(planeForDeletion.Id);
         
         Console.WriteLine("\nUspješno brisanje aviona {0} u trenutku: {1}",planeForDeletion.Name,DateTime.Now);
     }
 
     private static void DeleteByName()
     {
-        Console.Clear();
+        Helper.SleepAndClear();
         var planeForDeletion = SearchByName();
         if (planeForDeletion == null)
         {
@@ -361,11 +361,17 @@ public class Airplane:IHasName
         if (!Helper.ConfirmationMessage($"obrisati {planeForDeletion.Name} avion i sve letove ({flights}) vezane uz njega")) return;
         
         _airplaneList.RemoveAll(plane=>plane.Name == planeForDeletion.Name);
-        Flight.RemoveFlightsWithPlaneId(planeForDeletion.Id);
+        RemoveOtherFlightReferences(planeForDeletion.Id);
         
         Console.WriteLine("\nUspješno brisanje aviona: {0} u trenutku: {1}",planeForDeletion.Name,DateTime.Now);
     }
 
+    private static void RemoveOtherFlightReferences(int planeId)
+    {
+        Flight.RemoveFlightsWithPlaneId(planeId);
+        Passenger.RemoveFlightsWithPlaneId(planeId);       
+    }
+    
     public static Airplane ListAt(int index)
     {
         return _airplaneList[index];
