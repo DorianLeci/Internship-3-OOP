@@ -195,7 +195,7 @@ public class Passenger:Person
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Prikaz svih rezerviranih letova\n");
             Console.WriteLine("2 - Rezervacija leta\n");
-
+            Console.WriteLine("4 - Otkazivanje leta\n");
             Console.WriteLine("0 - Povratak na izbornik za putnike (Logout).");
             Console.WriteLine("----------------------\n");
             Console.Write("Unos: ");
@@ -208,6 +208,7 @@ public class Passenger:Person
                     break;
                 case '1':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova koje si rezerviao.\n");
+                    user.AllUserFlights();
                     Helper.WaitingUser();
                     break;
                 case '2':
@@ -215,6 +216,11 @@ public class Passenger:Person
                     user.ChooseFlight();
                     Helper.WaitingUser();
                     break;
+                case '4':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Otkazivanje leta.\n");
+                    user.CancelFlight();
+                    Helper.WaitingUser();
+                    break;                    
                 default:
                     Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
                     break;
@@ -228,6 +234,7 @@ public class Passenger:Person
         if (flightsWithoutOverlap.Count == 0)
         {
             Console.WriteLine("\nNe postoje dostupni letovi za ovog korisnika.Pokušaj ponovno kasnije.\n");
+            return;
         }
         
         var chosenFlight = Flight.SearchById(flightsWithoutOverlap,true);
@@ -241,7 +248,7 @@ public class Passenger:Person
         Helper.SleepAndClear();
         chosenFlight.OutputCapacityForOneFlight();
         
-        var chosenCategory = Flight.ChooseCategory();
+        var chosenCategory = chosenFlight.ChooseCategory();
 
         if (chosenCategory == null)
         {
@@ -249,12 +256,18 @@ public class Passenger:Person
             return;
         }
 
+        if (!Helper.ConfirmationMessage("rezervirati let"))
+        {
+            Console.WriteLine("\nIpak odustaješ od rezervacije leta.\n");
+            return;
+        }
+        
         this.UpdateTime = DateTime.Now;
         this._usrFlightDict.Add(chosenFlight,chosenCategory.Value);
         
         chosenFlight.DecrementCategoryCapacity(chosenCategory.Value);
         
-        Console.WriteLine($"\nUspješno rezerviran let {chosenFlight.Name} povezan s avionom {chosenFlight.Airplane.Name} u trenutku: {this.UpdateTime}." +
+        Console.WriteLine($"\nUspješno rezerviran let {chosenFlight.Name} povezan s avionom {chosenFlight.Airplane.Name} u trenutku: {this.UpdateTime:yyyy-MM-dd HH:mm}." +
                           $"Odabrana kategorija: {chosenCategory}");
         
     }
@@ -264,8 +277,53 @@ public class Passenger:Person
         this._usrFlightDict.Add(flight, category);
         flight.DecrementCategoryCapacity(category);
     }
-    
-    
+    private void AllUserFlights()
+    {
+        if (_usrFlightDict.Count == 0)
+        {
+            Console.WriteLine("\nNisi rezervirao niti jedan let.\n");
+            return;
+        }
+        Flight.AllAvailableFlights(false,_usrFlightDict.Keys.ToList());
+    }
+
+    private void CancelFlight()
+    {
+        Helper.MessagePrintAndSleep("\nOdaberi let koji želiš otkazazi.\n");
+        var availableFlights=AvailableFlightsForCancelation(_usrFlightDict.Keys.ToList());
+        if (availableFlights.Count == 0)
+        {
+            Console.WriteLine("\nLista dostupnih letova za otkazivanje je prazna.Ako imaš letove koji kreću za manje od 24h oni neće biti prikazani ovdje.\n");
+            return;
+        }
+        
+        var chosenFlight = Flight.SearchById(availableFlights);
+        if (chosenFlight == null)
+        {
+            Console.WriteLine("\nOdustao si od unošenja id-a leta pa si odustao od otkazivanje leta.\n");
+            return;
+        }
+
+        if (!Helper.ConfirmationMessage("otkazati let"))
+        {
+            Console.WriteLine("\nIpak odustaješ od otkazivanja leta.\n");
+            return;
+        }
+        
+        var chosenCategory=this._usrFlightDict[chosenFlight];
+        this._usrFlightDict.Remove(chosenFlight);
+        
+        chosenFlight.IncrementCategoryCapacity(chosenCategory);
+        
+        this.UpdateTime = DateTime.Now;
+        
+        Console.WriteLine($"\nUspješno otkazan let {chosenFlight.Name} povezan s avionom {chosenFlight.Airplane.Name} u trenutku: {this.UpdateTime:yyyy-MM-dd HH:mm}." +
+                          $"Odabrana kategorija: {chosenCategory}");        
+    }
+    private static List<Flight> AvailableFlightsForCancelation(List<Flight> userFlightList)
+    {
+        return userFlightList.FindAll(flight => (flight.DepartureDate - DateTime.Now).TotalHours > 24);
+    }
 }
 
 

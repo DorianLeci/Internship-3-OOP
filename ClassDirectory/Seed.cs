@@ -55,7 +55,7 @@ public class Seed
     }
     private static void FlightSeed()
     {
-        var depDate = new DateOnly(2025, 12, 11);
+        var depDate = new DateOnly(2025, 11, 22);
         var depTime = new TimeOnly(12, 30);
         var arrDate = new DateOnly(2025, 12, 11);
         var arrTime = new TimeOnly(13,30);
@@ -69,8 +69,8 @@ public class Seed
         _airplanes[1].FlightCount++;
 
         
-        depDate = new DateOnly(2025, 12, 12);
-        depTime = new TimeOnly(12,40);
+        depDate = new DateOnly(2025, 11, 22);
+        depTime = new TimeOnly(11,40);
         arrDate = new DateOnly(2025, 12, 13);
         arrTime = new TimeOnly(03,40);
         depDateTime=depDate.ToDateTime(depTime);
@@ -83,9 +83,9 @@ public class Seed
         _airplanes[2].FlightCount++;
 
         
-        depDate = new DateOnly(2025, 11, 24);
+        depDate = new DateOnly(2025, 12, 17);
         depTime = new TimeOnly(12,40);
-        arrDate = new DateOnly(2025, 11 ,24);
+        arrDate = new DateOnly(2025, 12 ,17);
         arrTime = new TimeOnly(18,40);
         depDateTime=depDate.ToDateTime(depTime);
         arrDateTime = arrDate.ToDateTime(arrTime);
@@ -96,9 +96,9 @@ public class Seed
         _flights.Add(flight3);
         _airplanes[0].FlightCount++;
         
-        depDate = new DateOnly(2025, 11, 25);
+        depDate = new DateOnly(2025, 12, 25);
         depTime = new TimeOnly(11,40);
-        arrDate = new DateOnly(2025, 11 ,25);
+        arrDate = new DateOnly(2025, 12 ,25);
         arrTime = new TimeOnly(14,40);
         depDateTime=depDate.ToDateTime(depTime);
         arrDateTime = arrDate.ToDateTime(arrTime);

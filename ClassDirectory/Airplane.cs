@@ -150,7 +150,8 @@ public class Airplane:IHasName
     }
     public static void AirplaneOutput()
     {
-
+        Helper.SleepAndClear();
+        Console.WriteLine("\nIspis svih aviona.\n");
         foreach (var airplane in _airplaneList)
         {
             airplane.FormattedAirplaneOutput();

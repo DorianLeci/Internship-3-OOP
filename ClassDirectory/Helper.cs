@@ -75,7 +75,7 @@ public class Helper
         Console.WriteLine("\nUnos godine.");
         while(true)
         {
-            Console.Write("\nUnesi godinu {0}.Osoba mora biti stara barem 18 godina i imati datum rođenja poslije 1950 godine: ",message);
+            Console.Write("\nUnesi godinu {0}. Starost mora barem 18 godina i ili unos mora biti poslije 1950 godine: ",message);
             if (!IsIntegerValid(out var inputYear))
             {
                 Console.WriteLine("\nPogrešan format unosa.\n");

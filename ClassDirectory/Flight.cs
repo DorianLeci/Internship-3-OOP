@@ -45,6 +45,10 @@ public class
     {
         this._capacityCount[category]--;
     }
+    public void IncrementCategoryCapacity(Categories category)
+    {
+        this._capacityCount[category]++;
+    }
 
     public List<Categories> GetCategories()
     {
@@ -199,8 +203,6 @@ public class
     }
     private static Airplane ChooseAirplane()
     {
-        Helper.SleepAndClear();
-        Console.WriteLine("\nLista dostupnih aviona\n");
         Airplane.AirplaneOutput();
     
         while (true)
@@ -308,7 +310,7 @@ public class
                             Helper.WaitingUser();
                             break;
                         }
-                        Helper.MessagePrintAndSleep("\nUspješan pronalazak aviona.");
+                        Helper.MessagePrintAndSleep("\nUspješan pronalazak leta.");
                         searchedFlightById.OutputForOneFlight(false);
                         Helper.WaitingUser();
                         break;
@@ -321,7 +323,7 @@ public class
                             break;
                         }
                         
-                        Helper.MessagePrintAndSleep("\nUspješan pronalazak aviona.");
+                        Helper.MessagePrintAndSleep("\nUspješan pronalazak leta.");
                         searchedAirplaneByName.OutputForOneFlight(false);
                         Helper.WaitingUser();
                         break;
@@ -523,8 +525,8 @@ public class
 
         return filtratedByCapacity;
     }
-
-    public static Categories? ChooseCategory()
+    
+    public Categories? ChooseCategory()
     {
         do
         {
@@ -535,7 +537,7 @@ public class
                 continue;               
             }
 
-            if (!Helper.IsDefinedInEnum(category))
+            if (!IsDefinedInFlightCategories(category))
             {
                 Console.WriteLine("\nTa kategorija nije navedena.\n");
                 continue;
@@ -546,5 +548,10 @@ public class
         } while (Helper.ConfirmationMessage("ponovno unijeti broj kategorije"));
 
         return null; 
+    }
+
+    private bool IsDefinedInFlightCategories(Categories category)
+    {
+        return _capacityCount.ContainsKey(category);
     }
 }
