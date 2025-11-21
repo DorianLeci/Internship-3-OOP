@@ -202,7 +202,7 @@ class Program
                         break;
                     case '1':
                         Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova\n");
-                        Flight.FlightFormattedOutput();
+                        Flight.AllAvailableFlights(false);
                         Helper.WaitingUser();
                         break;
                     case '2':

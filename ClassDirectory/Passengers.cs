@@ -189,42 +189,48 @@ public class Passenger:Person
 
     private static void PassengerFlightMenu(Passenger user)
     {
+        while (true)
+        {
             Helper.SleepAndClear();
             Console.WriteLine("\n----------------------");
             Console.WriteLine("1 - Prikaz svih rezerviranih letova\n");
             Console.WriteLine("2 - Rezervacija leta\n");
-            Console.WriteLine("3 - Pretraživanje letova\n");
-            Console.WriteLine("4 - Uređivanje leta\n");
-            Console.WriteLine("0 - Povratak na izbornik za putnike.");
+
+            Console.WriteLine("0 - Povratak na izbornik za putnike (Logout).");
             Console.WriteLine("----------------------\n");
             Console.Write("Unos: ");
             var input = Console.ReadKey().KeyChar;
-                switch (input)
-                {
-                    case '0':
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za putnike.\n");
-                        Console.WriteLine();
-                        Program.PassengerMenu();
-                        break;
-                    case '1':
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova koje si rezerviao.\n");
-                        Helper.WaitingUser();
-                        break;
-                    case '2':
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.Rezervacija leta.\n");
-                        user.ChooseFlight();
-                        Helper.WaitingUser();
-                        break;
-                    default:
-                        Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
-                        break;
-                }
+            switch (input)
+            {
+                case '0':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za putnike.Logout...\n");
+                    Program.PassengerMenu();
+                    break;
+                case '1':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova koje si rezerviao.\n");
+                    Helper.WaitingUser();
+                    break;
+                case '2':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Rezervacija leta.\n");
+                    user.ChooseFlight();
+                    Helper.WaitingUser();
+                    break;
+                default:
+                    Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
+                    break;
+            }            
+        }
+
     }   
     private void ChooseFlight()
     {
-        Helper.SleepAndClear();
         var flightsWithoutOverlap=Flight.AvailableFlightsForThisUser(_usrFlightDict.Keys.ToList());
-        var chosenFlight = Flight.SearchById(flightsWithoutOverlap);
+        if (flightsWithoutOverlap.Count == 0)
+        {
+            Console.WriteLine("\nNe postoje dostupni letovi za ovog korisnika.Pokušaj ponovno kasnije.\n");
+        }
+        
+        var chosenFlight = Flight.SearchById(flightsWithoutOverlap,true);
         
         if (chosenFlight == null)
         {
@@ -232,7 +238,8 @@ public class Passenger:Person
             return;
         }
         
-        chosenFlight.OutputCapacityForOneFlight(true);
+        Helper.SleepAndClear();
+        chosenFlight.OutputCapacityForOneFlight();
         
         var chosenCategory = Flight.ChooseCategory();
 
@@ -247,7 +254,7 @@ public class Passenger:Person
         
         chosenFlight.DecrementCategoryCapacity(chosenCategory.Value);
         
-        Console.WriteLine($"\nUspješno rezerviran let {chosenFlight.Name} povezan s avionom {chosenFlight.Airplane} u trenutku: {this.UpdateTime}." +
+        Console.WriteLine($"\nUspješno rezerviran let {chosenFlight.Name} povezan s avionom {chosenFlight.Airplane.Name} u trenutku: {this.UpdateTime}." +
                           $"Odabrana kategorija: {chosenCategory}");
         
     }

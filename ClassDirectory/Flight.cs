@@ -1,6 +1,4 @@
 using System.Globalization;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace Internship_3_OOP.ClassDirectory;
@@ -73,37 +71,37 @@ public class
 
     }
 
-    public static void FlightFormattedOutput(List<Flight>? flightList=null)
+    public static void FlightFormattedOutput(bool isUserReserving,List<Flight> flightList)
     {
-        flightList ??= _flightList;
         
-        Console.WriteLine("\n--------------");
         foreach(var flight in flightList)
         {
-            flight.OutputForOneFlight();
+            Console.WriteLine("\n--------------");
+            flight.OutputForOneFlight(isUserReserving);
+            Console.WriteLine("--------------\n");
         }
-
-        Console.WriteLine("--------------\n");
+        
     }
 
-    private void OutputForOneFlight()
+    private void OutputForOneFlight(bool isUserReserving)
     {
         var depDateTimeString = this.DepartureDate.ToString("yyyy-MM-dd HH:mm");
         var arrDateTimeString=this.ArrivalDate.ToString("yyyy-MM-dd HH:mm");
         Console.WriteLine("{0} - {1} - {2} - {3} - {4} -{5} - {6} - {7} - {8}\n",this.Id,this.Name,depDateTimeString,arrDateTimeString,
             this.Distance,this.FlightTime,this.Airplane.Name,this.FlightCrew.Id,this.FlightCrew.CrewName);   
         
-        OutputCapacityForOneFlight();
+        if(isUserReserving)
+            OutputCapacityForOneFlight();
     }
 
-    public void OutputCapacityForOneFlight(bool outputCapacity=false)
+    public void OutputCapacityForOneFlight()
     {
-        if (!outputCapacity) return;
         
-        Console.WriteLine("\nIspis dostupnih slobodnih mjesta po svakoj kategoriji(id kategorije - ime kategorije - broj dostupnih sjedala).\n");        
+        Console.WriteLine("\nIspis dostupnih slobodnih mjesta po svakoj kategoriji(id kategorije - ime kategorije - broj dostupnih sjedala).");        
         
         var filtratedDictByValue = _capacityCount.Where(kvPair => kvPair.Value > 0);
-        var printString =string.Join(", ",filtratedDictByValue.Select(kvPair=>$"{(int)kvPair.Key} - {kvPair.Key}  - {kvPair.Value}"));
+        var printString =string.Join(", ",filtratedDictByValue.OrderBy(kvPair=>(int)kvPair.Key).
+            Select(kvPair=>$"{(int)kvPair.Key} - {kvPair.Key}  - {kvPair.Value}"));
         
         Console.WriteLine($"\n[{printString}]\n");
 
@@ -311,7 +309,7 @@ public class
                             break;
                         }
                         Helper.MessagePrintAndSleep("\nUspješan pronalazak aviona.");
-                        searchedFlightById.OutputForOneFlight();
+                        searchedFlightById.OutputForOneFlight(false);
                         Helper.WaitingUser();
                         break;
                     case '2':
@@ -324,7 +322,7 @@ public class
                         }
                         
                         Helper.MessagePrintAndSleep("\nUspješan pronalazak aviona.");
-                        searchedAirplaneByName.OutputForOneFlight();
+                        searchedAirplaneByName.OutputForOneFlight(false);
                         Helper.WaitingUser();
                         break;
                     default:
@@ -338,10 +336,11 @@ public class
     {
         return _flightList.Count == 0;
     }
-    public static Flight? SearchById(List<Flight> flightList)
+    public static Flight? SearchById(List<Flight> flightList,bool isUserReserving=false)
     {
         Helper.SleepAndClear();
-        AllAvailableFlights();
+        AllAvailableFlights(isUserReserving,flightList);
+        
         do
         {
             Console.Write("\nUnesi id: ");
@@ -367,7 +366,7 @@ public class
     private static Flight? SearchByName()
     {
         Helper.SleepAndClear();
-        AllAvailableFlights();
+        AllAvailableFlights(false);
         do
         {
             var searchIndex=Helper.FormatAndSearchByName(_flightList);
@@ -383,16 +382,21 @@ public class
 
         return null;
     }
-    private static void AllAvailableFlights()
+    public static void AllAvailableFlights(bool isUserReserving,List<Flight>? flightList=null)
     {
+        Helper.SleepAndClear();
+        
+        flightList ??= _flightList;
+        
         Console.WriteLine("Ispis svih dostupnih letova");
-        FlightFormattedOutput(_flightList);
+        
+        FlightFormattedOutput(isUserReserving,flightList);
     }
 
     public static void FlightEdit()
     {
         Helper.SleepAndClear();
-        AllAvailableFlights();
+        AllAvailableFlights(false);
         var returnedFlight=SearchById(_flightList);
 
         returnedFlight?.FoundFlightEdit();
@@ -522,7 +526,6 @@ public class
 
     public static Categories? ChooseCategory()
     {
-        AllAvailableFlights();
         do
         {
             Console.Write("\nUnesi kategoriju(broj kategorije): ");
