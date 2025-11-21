@@ -137,6 +137,9 @@ public class Helper
         {
             Console.WriteLine("\nŽeliš li {0} -- y/n.\n", messageType);
             var charInput=Console.ReadKey().KeyChar;
+            var charInputString = charInput.ToString().ToLower();
+            charInput=charInputString[0];
+            
             switch (charInput)
             {
                 case 'y':

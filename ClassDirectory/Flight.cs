@@ -18,6 +18,8 @@ public class
     public Crew FlightCrew { get; set; }
     private static List<Flight> _flightList = new List<Flight>();
 
+    public bool IsFavorite { get; set; }
+
     private Dictionary<Categories, int> _capacityCount;
 
     public Flight(string name, DateTime departureDate,DateTime arrivalDate,double distance,TimeSpan flightTime,Airplane airplane,Crew flightCrew)
@@ -32,7 +34,7 @@ public class
         this.FlightCrew = flightCrew;
         this.CreationTime = DateTime.Now;
         this.UpdateTime = DateTime.Now;
-
+        this.IsFavorite = false;
         this._capacityCount = Airplane.GetCategoriesAndCapacity();
     }
 

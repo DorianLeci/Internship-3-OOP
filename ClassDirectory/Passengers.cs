@@ -196,6 +196,7 @@ public class Passenger:Person
             Console.WriteLine("2 - Rezervacija leta\n");
             Console.WriteLine("3 - Pretraživanje letova\n");
             Console.WriteLine("4 - Otkazivanje leta\n");
+            Console.WriteLine("5 - Izbornik za najdraže letove(favorite)\n");
             Console.WriteLine("0 - Povratak na izbornik za korisnike.(Logout).");
             Console.WriteLine("----------------------\n");
             Console.Write("Unos: ");
@@ -225,7 +226,12 @@ public class Passenger:Person
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Otkazivanje leta.\n");
                     user.CancelFlight();
                     Helper.WaitingUser();
-                    break;                    
+                    break;        
+                case '5':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Izbornik za najdraže letove(favorite).\n");
+                    user.FavoriteFlightsMenu();
+                    Helper.WaitingUser();
+                    break;   
                 default:
                     Helper.MessagePrintAndSleep("\nUnos nije među ponuđenima.Unesi ponovno.\n");
                     break;
@@ -403,6 +409,94 @@ public class Passenger:Person
         foreach(var passenger in _passengerList)
         {
             passenger._usrFlightDict.Remove(flight);
+        }
+    }
+
+    private void FavoriteFlightsMenu()
+    {
+        while(true){
+            
+            var flightList = _usrFlightDict.Keys.ToList();
+                if (Flight.IsFlightListEmpty(flightList))
+                {
+                    Helper.MessagePrintAndSleep("\nLista letova je prazna.Ne možeš dodavati ili ispisivati favorite.\n");
+                    return;
+                }
+                Console.Clear();
+                Console.WriteLine("\n----------------------");
+                Console.WriteLine("1 - Dodavanje omiljenog leta\n");
+                Console.WriteLine("2 - Ispis omiljenih letova\n");
+                Console.WriteLine("0 - Povratak na izbornik za prijavljene korisnike.");
+                Console.WriteLine("----------------------\n");
+                Console.Write("\nUnos :");
+                var input=Console.ReadKey().KeyChar;
+                    switch (input)
+                    {
+                        case '0':
+                            Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za prijavljene korisnike.\n");
+                            PassengerFlightMenu(this);
+                            break;
+                        case '1':
+                            Helper.MessagePrintAndSleep("\nUspješan odabir.Dodavanje omiljenog leta.");
+                            AddFavorite();
+                            
+                            Helper.WaitingUser();
+                            break;
+                        case '2':
+                            Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis omiljenih letova.\n");
+                            PrintFavorite();
+                            
+                            Helper.WaitingUser();
+                            break;
+                        default:
+                            Helper.MessagePrintAndSleep("\nUnos nije ponuđenima.Unesi ponovno.\n");
+                            break;
+                    }
+        }           
+    }
+    
+    private void AddFavorite()
+    {
+        var flightList=_usrFlightDict.Keys.Where(flight=>!flight.IsFavorite).ToList();
+        if (flightList.Count == 0)
+        {
+            Console.WriteLine("\nLista dostupnih letova koje možeš dodati kao omiljene je prazna.Sve letove koje si imao si označio kao omiljene.\n");
+            return;
+        }
+        
+        var searchedFlight = Flight.SearchById(flightList);
+        if (searchedFlight == null)
+        {
+            Console.WriteLine("\nOdustao si od unosa id-a pa si odustao od dodavanja novog omiljenog leta.\n");
+            return;
+        }
+
+        if (!Helper.ConfirmationMessage("dodati novi omiljeni let"))
+        {
+            Console.WriteLine("\nIpak si odustao od dodavanja novog omiljenog leta.\n");
+            return;
+        }
+
+        searchedFlight.IsFavorite = true;
+        searchedFlight.UpdateTime = DateTime.Now;
+        UpdateTime=DateTime.Now;
+        
+        Console.WriteLine($"\nUspješno dodavanje novog najdražeg leta : {searchedFlight.Id} - {searchedFlight.Name} - {searchedFlight.Airplane.Name}" +
+                          $" u trenutku {UpdateTime:yyyy-MM-dd HH:mm}");
+
+    }
+
+    private void PrintFavorite()
+    {
+        Helper.SleepAndClear();
+        Console.WriteLine("\nIspis omiljenih letova.\n");
+        
+        var flightList=_usrFlightDict.Keys.Where(flight=>flight.IsFavorite).ToList();
+        foreach (var flight in flightList)
+        {
+            Console.WriteLine("\n----------");
+            flight.OutputForOneFlight(false);
+            Console.WriteLine("----------\n");
         }
     }
 }
