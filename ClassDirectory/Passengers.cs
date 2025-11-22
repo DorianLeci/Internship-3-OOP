@@ -186,7 +186,7 @@ public class Passenger:Person
         return  (isSpecialChar && isUpperChar && inputPassword.Length>=8);
     }
 
-    private static void PassengerFlightMenu(Passenger user)
+    public static void PassengerFlightMenu(Passenger user)
     {
         while (true)
         {
@@ -209,7 +209,7 @@ public class Passenger:Person
                     break;
                 case '1':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih letova koje si rezerviao.\n");
-                    user.AllUserFlights();
+                    Flight.FlightOutputMenu(user._usrFlightDict.Keys.ToList(),false,user);
                     Helper.WaitingUser();
                     break;
                 case '2':
