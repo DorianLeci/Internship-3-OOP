@@ -1,6 +1,5 @@
 namespace Internship_3_OOP.ClassDirectory;
 
-using CrewDict=Dictionary<string, List<StaffMember>>;
 
 public class Crew
 {

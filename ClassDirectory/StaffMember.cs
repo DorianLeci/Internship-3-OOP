@@ -1,6 +1,4 @@
 
-using System.Globalization;
-
 namespace Internship_3_OOP.ClassDirectory;
 
 public class StaffMember:Person
