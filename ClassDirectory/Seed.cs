@@ -29,7 +29,7 @@ public class Seed
             {Categories.Standard,150},
             { Categories.Vip ,50}
         };
-        var airplane1 = new Airplane("Croatia 1",2004,catDict1);    
+        var airplane1 = new Airplane("Croatia 1",1998,catDict1);    
         airplane1.AddToList();
         
         var catDict2 = new Dictionary<Categories, int>()
@@ -38,7 +38,7 @@ public class Seed
             {Categories.Business,80},
             {Categories.Standard,130},
         };
-        var airplane2 = new Airplane("Croatia 2",2004,catDict2);  
+        var airplane2 = new Airplane("Croatia 2",1997,catDict2);  
         airplane2.AddToList();
         
         var catDict3 = new Dictionary<Categories, int>()

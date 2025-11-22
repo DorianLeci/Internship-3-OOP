@@ -1,4 +1,5 @@
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 
 namespace Internship_3_OOP.ClassDirectory;
 
@@ -18,8 +19,8 @@ public class Airplane:IHasName
     private Dictionary<Categories, int> _categoriesDict;
     private static List<Airplane> _airplaneList = new List<Airplane>();
 
-    public DateTime creationTime { get; }
-    public DateTime updateTime { get; }
+    public DateTime CreationTime { get; }
+    public DateTime UpdateTime { get; }
 
     public Airplane(string name, int manufactureYear, Dictionary<Categories, int> categoriesDict)
     {
@@ -28,8 +29,8 @@ public class Airplane:IHasName
         this.ManufactureYear = manufactureYear;
         this._categoriesDict = categoriesDict;
         this.FlightCount = 0;
-        this.creationTime = DateTime.Now;
-        this.updateTime = DateTime.Now;
+        this.CreationTime = DateTime.Now;
+        this.UpdateTime = DateTime.Now;
     }
 
     public Dictionary<Categories,int> GetCategoriesAndCapacity()
@@ -148,11 +149,129 @@ public class Airplane:IHasName
             else if(inputSeats<=0) Console.WriteLine("Pogrešan unos broja sjedećih mjesta.");
         }
     }
-    public static void AirplaneOutput()
+
+    public static void AirplaneOutputMenu()
+    {
+        while(true){
+            
+            if (IsAirplaneListEmpty())
+            {
+                Helper.MessagePrintAndSleep("\nLista letova je prazna.Ne možeš ispisivati letove.\n");
+                return;
+            }
+            Console.Clear();
+            Console.WriteLine("\n----------------------");
+            Console.WriteLine("1 - Ispis aviona po vremenu dodavanja(silazno)\n");
+            Console.WriteLine("2 - Ispis aviona po vremenu dodavanja(uzlazno)\n");
+            Console.WriteLine("3 - Ispis aviona po godini proizvodnje(silazno)\n");
+            Console.WriteLine("4 - Ispis aviona po godini proizvodnje(uzlazno)\n");
+            Console.WriteLine("5 - Ispis aviona po broju odrađenih letova(silazno)\n");
+            Console.WriteLine("6 - Ispis aviona po broju odrađenih letova(uzlazno)\n");
+            Console.WriteLine("0 - Povratak na izbornik za avione.");
+            Console.WriteLine("----------------------\n");
+            Console.Write("\nUnos :");
+            var input=Console.ReadKey().KeyChar;
+            switch (input)
+            {
+                case '0':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Povratak na izbornik za avione.\n");
+                    Program.AirplaneMenu();
+                    break;
+                case '1':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis aviona po vremenu dodavanja(silazno).");
+                    OutputByParameter(false,SortKey.CreationTime);
+                    Helper.WaitingUser();
+                    break;
+                case '2':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis aviona po vremenu dodavanja(uzlazno).\n");
+                    OutputByParameter(true,SortKey.CreationTime);                           
+                    Helper.WaitingUser();
+                    break;
+                case '3':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis aviona po godini proizvodnje(silazno).\n");
+                    OutputByParameter(false,SortKey.ManufactureYear);                           
+                    Helper.WaitingUser();
+                    break;
+                case '4':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis aviona po godini proizvodnje(uzlazno).\n");
+                    OutputByParameter(true,SortKey.ManufactureYear);                           
+                    Helper.WaitingUser();
+                    break;
+                case '5':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis aviona po broju odrađenih letova(silazno).\n");
+                    OutputByParameter(false,SortKey.FlightCount);                           
+                    Helper.WaitingUser();
+                    break;
+                case '6':
+                    Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis aviona po broju odrađenih letova(uzlazno).\n");
+                    OutputByParameter(true,SortKey.FlightCount);                           
+                    Helper.WaitingUser();
+                    break;
+                default:
+                    Helper.MessagePrintAndSleep("\nUnos nije ponuđenima.Unesi ponovno.\n");
+                    break;
+            }
+        }    
+    }
+    private enum SortKey
+    {
+        CreationTime,
+        ManufactureYear,
+        FlightCount
+    }
+    private static void OutputByParameter(bool isAscending,SortKey key)
+    {
+        var planeList = key switch
+        {
+            SortKey.CreationTime => (isAscending)
+                ? _airplaneList.OrderBy(plane => plane.CreationTime).ToList()
+                : _airplaneList.OrderByDescending(plane => plane.CreationTime).ToList(),
+            
+            SortKey.ManufactureYear => (isAscending)
+                ? _airplaneList.OrderBy(plane => plane.ManufactureYear).ToList()
+                : _airplaneList.OrderByDescending(plane => plane.ManufactureYear).ToList(),
+            
+            SortKey.FlightCount => (isAscending)
+                ? _airplaneList.OrderBy(plane =>plane.FlightCount).ToList()
+                : _airplaneList.OrderByDescending(plane => plane.FlightCount).ToList(),
+            
+            _ => []
+        };
+        
+        
+        if (key == SortKey.CreationTime)
+        {
+            AirplaneOutputWithDate(planeList);
+            return;
+        }
+        AirplaneOutput(planeList);        
+      
+
+    }
+
+    private static void AirplaneOutputWithDate(List<Airplane> planeList)
     {
         Helper.SleepAndClear();
+        Console.WriteLine("\nIspis svih aviona\n");
+        
+        var planeInfo = planeList.Select(plane =>
+        {
+            var categories = plane._categoriesDict.Select(kvPair => $"{kvPair.Key} - {kvPair.Value}");
+            var joinCategories=string.Join(", ", categories);
+            
+            return $"\n-----------\n{plane.CreationTime:yyyy-MM-dd HH:mm} - {plane.Id} - {plane.Name} - {plane.ManufactureYear} - {plane.FlightCount}\n[{joinCategories}]";
+        });
+        
+        var finalString = string.Join("\n-----------\n", planeInfo);
+        Console.WriteLine(finalString);        
+    }
+    
+    public static void AirplaneOutput(List<Airplane>? airplaneList=null)
+    {
+        airplaneList??= _airplaneList;
+        Helper.SleepAndClear();
         Console.WriteLine("\nIspis svih aviona.\n");
-        foreach (var airplane in _airplaneList)
+        foreach (var airplane in airplaneList)
         {
             airplane.FormattedAirplaneOutput();
         }

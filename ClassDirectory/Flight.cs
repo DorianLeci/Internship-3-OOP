@@ -12,7 +12,7 @@ public class
     public DateTime ArrivalDate { get; set; }
     public double Distance { get; }
     public TimeSpan FlightTime { get; set; }
-    public DateTime CreationTime { get; }
+    public DateTime CreationTime;
     public DateTime UpdateTime { get; set; }
     public Airplane Airplane { get; }
     public Crew FlightCrew { get; set; }
@@ -183,7 +183,6 @@ public class
     }
     private static bool FlightFormatCheck(out DateTime inputDateTime)
     {
-        var today = DateTime.Now;
         var input = Console.ReadLine()!.Trim();
 
         return DateTime.TryParseExact(input, "yyyy-MM-dd HH:mm",
@@ -646,42 +645,42 @@ public class
                     break;
                 case '1':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po vremenu polaska(silazno).");
-                    OutputByDepTime(false,SortKey.DepDateTime,flightList);
+                    OutputByParameter(false,SortKey.DepDateTime,flightList);
                     Helper.WaitingUser();
                     break;
                 case '2':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po vremenu polaska(uzlazno).\n");
-                    OutputByDepTime(true,SortKey.DepDateTime,flightList);                           
+                    OutputByParameter(true,SortKey.DepDateTime,flightList);                           
                     Helper.WaitingUser();
                     break;
                 case '3':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po vremenu trajanja(silazno).\n");
-                    OutputByDepTime(false,SortKey.FlightTime,flightList);                           
+                    OutputByParameter(false,SortKey.FlightTime,flightList);                           
                     Helper.WaitingUser();
                     break;
                 case '4':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po vremenu trajanja(uzlazno).\n");
-                    OutputByDepTime(true,SortKey.FlightTime,flightList);                           
+                    OutputByParameter(true,SortKey.FlightTime,flightList);                           
                     Helper.WaitingUser();
                     break;
                 case '5':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po udaljenosti(silazno).\n");
-                    OutputByDepTime(false,SortKey.FlightDistance,flightList);                           
+                    OutputByParameter(false,SortKey.FlightDistance,flightList);                           
                     Helper.WaitingUser();
                     break;
                 case '6':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova po udaljenosti(uzlazno).\n");
-                    OutputByDepTime(true,SortKey.FlightDistance,flightList);                           
+                    OutputByParameter(true,SortKey.FlightDistance,flightList);                           
                     Helper.WaitingUser();
                     break;
                 case '7':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova abecedno po imenu(silazno).\n");
-                    OutputByDepTime(false,SortKey.Name,flightList);                           
+                    OutputByParameter(false,SortKey.Name,flightList);                           
                     Helper.WaitingUser();
                     break;
                 case '8':
                     Helper.MessagePrintAndSleep("\nUspješan odabir.Ispis letova abecedno po imenu(uzlazno).\n");
-                    OutputByDepTime(true,SortKey.Name,flightList);                           
+                    OutputByParameter(true,SortKey.Name,flightList);                           
                     Helper.WaitingUser();
                     break;
                 default:
@@ -698,7 +697,7 @@ public class
         FlightDistance,
         Name
     }
-    private static void OutputByDepTime(bool isAscending,SortKey key,List<Flight>  flights)
+    private static void OutputByParameter(bool isAscending,SortKey key,List<Flight>  flights)
     {
         var flightList = key switch
         {

@@ -1,12 +1,9 @@
-﻿using System.Data;
-using System.Linq.Expressions;
-using Internship_3_OOP.ClassDirectory;
+﻿using Internship_3_OOP.ClassDirectory;
 namespace Internship_3_OOP;
 
 class Program
 {
-    private static Random _rnd = new Random();
-
+    
     static void Main(string[] args)
     {
         Seed.DataSeed();
@@ -106,7 +103,7 @@ class Program
         {
             Console.Clear();
             Console.WriteLine("\n----------------------");
-            Console.WriteLine("1 - Prikaz svih aviona\n");
+            Console.WriteLine("1 - Izbornik za prikaz aviona\n");
             Console.WriteLine("2 - Dodavanje aviona\n");
             Console.WriteLine("3 - Pretraživanje aviona\n");
             Console.WriteLine("4 - Brisanje aviona\n");
@@ -121,15 +118,8 @@ class Program
                         MainMenu();
                         break;
                     case '1':
-                        if (Airplane.IsAirplaneListEmpty())
-                        {
-                            Helper.MessagePrintAndSleep("\nLista aviona je prazna.Ne možeš ih prikazati.\n");
-                            Helper.WaitingUser();
-                            break;                           
-                        }
-                        
-                        Helper.MessagePrintAndSleep("\nUspješan odabir.Prikaz svih aviona.");
-                        Airplane.AirplaneOutput();                            
+                        Helper.MessagePrintAndSleep("\nUspješan odabir.Izbornik za prikaz aviona.\n");
+                        Airplane.AirplaneOutputMenu();                            
 
                         Helper.WaitingUser();
                         break;
@@ -145,7 +135,7 @@ class Program
                         }
                         Console.Clear();
                         Helper.MessagePrintAndSleep("\nUspješno dodan novi avion.");
-                        Console.WriteLine("Vrijeme stvaranja: {0}",Airplane.GetLastElement()?.creationTime);
+                        Console.WriteLine("Vrijeme stvaranja: {0}",Airplane.GetLastElement()?.CreationTime);
                         Airplane.GetLastElement()?.FormattedAirplaneOutput();  
                         
                         Helper.WaitingUser();
