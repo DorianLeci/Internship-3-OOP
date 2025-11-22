@@ -6,7 +6,7 @@ To run this console app you need to have the following installed on your compute
 Steps to install the project:
 
 ```
-git clone https://github.com/DorianLeci/Internship-2-C-Sharp.git
+git clone https://github.com/DorianLeci/Internship-3-OOP.git
 cd Internship-3-OOP
 dotnet run
 ```
